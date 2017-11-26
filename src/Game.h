@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Global.h"
+#include "Math.h"
 
 #define MAX_PROJECTILES 10
 
@@ -9,13 +10,14 @@ enum Direction {DirectionRight, DirectionUp, DirectionLeft, DirectionDown};
 class hero
 {
 	public:
-	float X;
-	float Y;
-	int Width;
-	int Height;
-	int Color;
-	float Speed;
-	Direction HeroDirection;
+		Vector2 Position;
+		//float X;
+		//float Y;
+		int Width;
+		int Height;
+		int Color;
+		float Speed;
+		Direction HeroDirection;
 };
 
 struct projectile

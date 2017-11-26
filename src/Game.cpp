@@ -5,8 +5,9 @@
 
 void GameStateInitialize(game_state *GameState)
 {
-	GameState->Hero.X = 100;
-	GameState->Hero.Y = 100;
+	//GameState->Hero.X = 100;
+	//GameState->Hero.Y = 100;
+	GameState->Hero.Position.SetXY(100, 100);
 	GameState->Hero.Width = 20;
 	GameState->Hero.Height = 20;
 	GameState->Hero.Color = HMRGB(255,0,0);
@@ -21,22 +22,22 @@ void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen
 	
 	if (KeysDown->Left)
 	{
-		GameState->Hero.X -= GameState->Hero.Speed;
+		GameState->Hero.Position.X -= GameState->Hero.Speed;
 		GameState->Hero.HeroDirection = DirectionLeft;
 	}
 	if (KeysDown->Right)
 	{
-		GameState->Hero.X += GameState->Hero.Speed;
+		GameState->Hero.Position.X += GameState->Hero.Speed;
 		GameState->Hero.HeroDirection = DirectionRight;
 	}
 	if (KeysDown->Up)
 	{
-		GameState->Hero.Y -= GameState->Hero.Speed;
+		GameState->Hero.Position.Y -= GameState->Hero.Speed;
 		GameState->Hero.HeroDirection = DirectionUp;
 	}
 	if (KeysDown->Down)
 	{
-		GameState->Hero.Y += GameState->Hero.Speed;
+		GameState->Hero.Position.Y += GameState->Hero.Speed;
 		GameState->Hero.HeroDirection = DirectionDown;
 	}
 	if (KeysDown->Space)
@@ -52,7 +53,7 @@ void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer)
 	ClearBuffer(Buffer);
 	//DrawRectangle(&GlobalBackbuffer, 100 + XOffset, 100 + YOffset, 100, 100, HMRGB(255, 0, 0));
 	hero *Hero = &(GameState->Hero);
-	DrawRectangle(Buffer, Hero->X, Hero->Y, Hero->Width, Hero->Height, Hero->Color);
+	DrawRectangle(Buffer, Hero->Position.X, Hero->Position.Y, Hero->Width, Hero->Height, Hero->Color);
 
 }
 

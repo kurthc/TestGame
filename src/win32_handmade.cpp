@@ -28,61 +28,6 @@ Win32GetWindowDimension(HWND Window)
 
     return(Result);
 }
-//
-//internal void
-//RenderWeirdGradient(win32_offscreen_buffer *Buffer, int BlueOffset, int GreenOffset)
-//{
-//    // TODO(casey): Let's see what the optimizer does
-//
-//	SendStringToDebug("RenderWeirdGradient");
-//
-//    uint8 *Row = (uint8 *)Buffer->Memory;    
-//    for(int Y = 0;
-//        Y < Buffer->Height;
-//        ++Y)
-//    {
-//        uint32 *Pixel = (uint32 *)Row;
-//        for(int X = 0;
-//            X < Buffer->Width;
-//            ++X)
-//        {
-//            uint8 Blue = (X + BlueOffset);
-//            uint8 Green = (Y + GreenOffset);
-//
-//            *Pixel++ = ((Green << 8) | Blue);
-//        }
-//        
-//        Row += Buffer->Pitch;
-//    }
-//}
-
-//internal void ClearBuffer(win32_offscreen_buffer *Buffer)
-//{
-//	int32_t *Pixel = (int32_t*)Buffer->Memory;
-//
-//	for (int i = 0; i < Buffer->Width * Buffer->Height; i++)
-//	{
-//		//int32_t Red = RGB(255,0,0);
-//		//int32_t Green = RGB(0, 255, 0);
-//		//int32_t Blue = RGB(0, 0, 255);
-//
-//		Pixel[i] = 0;   //RGB(0,0,0);
-//
-//	}
-//}
-//
-//internal void DrawRectangle(win32_offscreen_buffer *Buffer, int X, int Y, int Width, int Height, int32_t Color)
-//{
-//	
-//	int32_t* Pixel = (int32_t*)Buffer->Memory;
-//	for (int j = max(Y, 0); j < Y + Height && j < Buffer->Height; j++)
-//	{
-//		for (int i = max(X, 0); i < X + Width && i < Buffer->Width; i++)
-//		{
-//			Pixel[(j-1)*Buffer->Width + i] = Color;
-//		}
-//	}
-//}
 
 internal void
 Win32ResizeDIBSection(win32_offscreen_buffer *Buffer, int Width, int Height)
