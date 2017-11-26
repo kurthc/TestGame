@@ -5,51 +5,48 @@
 
 #define MAX_PROJECTILES 10
 
-enum Direction {DirectionRight, DirectionUp, DirectionLeft, DirectionDown};
+//enum Direction { DirectionRight = 0, DirectionUp = 1, DirectionLeft = 2, DirectionDown = 3 };
+
 
 class hero
 {
 	public:
 		Vector2 Position;
-		//float X;
-		//float Y;
 		int Width;
 		int Height;
 		int Color;
 		float Speed;
-		Direction HeroDirection;
+		Vector2 HeroDirection;
+		//Direction HeroDirection;
 };
 
-struct projectile
+class projectile
 {
-	float X;
-	float Y;
-	float VelocityX;
-	float VelocityY;
+	Vector2 Position;
+	Vector2 Velocity;
 
 };
 
-struct projectiles
+class projectiles
 {
-	struct projectile Projectile[MAX_PROJECTILES];
+	projectile Projectile[MAX_PROJECTILES];
 	int ProjectileCount;
 };
 
-struct game_state
+class game_state
 {
-	struct hero Hero;
-	struct projectile Projectiles[MAX_PROJECTILES];
+	hero Hero;
+	projectile Projectiles[MAX_PROJECTILES];
 };
 
-struct game_offscreen_buffer
+class game_offscreen_buffer
 {
-	// NOTE(casey): Pixels are alwasy 32-bits wide, Memory Order BB GG RR XX
+	// NOTE: Pixels are always 32-bits wide, Memory Order BB GG RR XX
 	void *Memory;
 	int Width;
 	int Height;
 	int Pitch;
 };
-
 
 
 global_variable int GameAreaWidth = 1000;
