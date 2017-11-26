@@ -111,14 +111,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Math.cpp" />
     <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\Math.cpp" />
     <ClCompile Include="src\win32_handmade.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Math.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\Global.h" />
+    <ClInclude Include="src\Math.h" />
     <ClInclude Include="src\win32_handmade.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
