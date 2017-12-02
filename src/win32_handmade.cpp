@@ -12,10 +12,6 @@
 #include "Game.h"
 
 
-
-
-// TODO(casey): This is a global for now.
-
 internal win32_window_dimension
 Win32GetWindowDimension(HWND Window)
 {
@@ -239,15 +235,46 @@ Win32MainWindowCallback(HWND Window,
     return(Result);
 }
 
+void SendIntToDebug(int n)
+{
+	char MsgBuffer[256];
+	wsprintf(MsgBuffer, "%d\n", n);
+	OutputDebugStringA(MsgBuffer);
+}
+
 void SendStringToDebug(char *Message)
+{
+	//LARGE_INTEGER Counts;
+	//QueryPerformanceCounter(&Counts);
+	//char MsgBuffer[256];
+	//wsprintf(MsgBuffer, "%d\n", (int)Counts.QuadPart);
+	OutputDebugStringA(Message);
+//	OutputDebugStringA(MsgBuffer);
+}
+
+float GetSeconds()
 {
 	LARGE_INTEGER Counts;
 	QueryPerformanceCounter(&Counts);
-	char MsgBuffer[256];
-	wsprintf(MsgBuffer, "%d\n", (int)Counts.QuadPart);
-	OutputDebugStringA(Message);
-	OutputDebugStringA(MsgBuffer);
+	return ((float)Counts.QuadPart) / CountsPerSecond;
 }
+
+void Win32HandleMessages()
+{
+	// Loop for as long as we have messages.
+	MSG Message;
+	while (PeekMessage(&Message, 0, 0, 0, PM_REMOVE))
+	{
+		if (Message.message == WM_QUIT)
+		{
+			GlobalRunning = false;
+		}
+
+		TranslateMessage(&Message);
+		DispatchMessageA(&Message);
+	}
+}
+
 
 
 int CALLBACK
@@ -259,9 +286,11 @@ WinMain(HINSTANCE Instance,
 	// QueryPerformanceCounter() returns clock time in "counts". We can convert this to seconds with QueryPerformanceFrequency,
 	// which returns counts per second (constant and determined at boot).
 	// (counts/sec) / (frames/sec) = (count/frame)
-	LARGE_INTEGER CountsPerSecond;
-	QueryPerformanceFrequency(&CountsPerSecond);
-	int CountsPerFrame = (int)CountsPerSecond.QuadPart / TargetFPS;
+	LARGE_INTEGER CountsPerSecondLarge;
+	QueryPerformanceFrequency(&CountsPerSecondLarge);
+	CountsPerSecond = (int)CountsPerSecondLarge.QuadPart;
+
+	//int CountsPerFrame = (int)CountsPerSecondLarge.QuadPart / TargetFPS;
 
 	// Initialize the back buffer.
     Win32ResizeDIBSection(&GlobalBackBuffer, GameWindowWidth, GameWindowHeight);
@@ -279,8 +308,7 @@ WinMain(HINSTANCE Instance,
                 CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, Instance, 0);
         if(Window)
         {
-            // NOTE(casey): Since we specified CS_OWNDC, we can just get one device context and use it forever because we
-            // are not sharing it with anyone.
+            // Since we specified CS_OWNDC, we can just get one device context and use it forever because we are not sharing it with anyone.
             HDC DeviceContext = GetDC(Window);
 
 			game_offscreen_buffer GameBuffer = {};
@@ -294,48 +322,41 @@ WinMain(HINSTANCE Instance,
 			GameStateInitialize(&GameState);
 
 			GlobalRunning = true;
-			LARGE_INTEGER LastCycleStart;
-			QueryPerformanceCounter(&LastCycleStart);
+			float LastFrameStart = GetSeconds();
+			float CurrentTime = 0;
+			int FrameCount = 0;
 
-			// **** The Main game loop
+			//
+			// ********* The Main game loop starts here *************
+			//
             while(GlobalRunning)
             {
-				// Loop for as long as we have messages.
-				MSG Message;
-                while(PeekMessage(&Message, 0, 0, 0, PM_REMOVE))
-                {
-                    if(Message.message == WM_QUIT)
-                    {
-                        GlobalRunning = false;
-                    }
-                    
-                    TranslateMessage(&Message);
-                    DispatchMessageA(&Message);
-                }
-                
-				LARGE_INTEGER CurrentTime;
-				QueryPerformanceCounter(&CurrentTime);
-				
-				int CountsSinceLastCycle = (int32)(CurrentTime.QuadPart - LastCycleStart.QuadPart);
-				if (CountsSinceLastCycle >= CountsPerFrame)
+				// Handle Windows messages, process the game, and render the buffer.
+				Win32HandleMessages();
+				GameStateProcess(&GameState, &KeysDown, &GameBuffer);
+				RenderBuffer(&GameState, &GameBuffer);
+
+				//
+				CurrentTime = GetSeconds();
+				while (CurrentTime - LastFrameStart < (1 / TargetFPS))
 				{
-					GameStateProcess(&GameState, &KeysDown, &GameBuffer);
-					//int32 MSeconds = (int32)(1000 * (CurrentTime.QuadPart - LastCycleStart.QuadPart) / CountsPerSecond.QuadPart);
-					//char MsgBuffer[256];
-					//wsprintf(MsgBuffer, "Milliseconds: %dms\n", MSeconds);
-					//OutputDebugStringA(MsgBuffer);
-
-					RenderBuffer(&GameState, &GameBuffer);
-					//RenderWeirdGradient(&GlobalBackbuffer, XOffset, YOffset);
-					LastCycleStart = CurrentTime;
+					CurrentTime = GetSeconds();
 				}
-
-
+                
+				//
+				// Update the window.
+				//
                 win32_window_dimension Dimension = Win32GetWindowDimension(Window);
                 Win32DisplayBufferInWindow(&GlobalBackBuffer, DeviceContext,
                                            Dimension.Width, Dimension.Height);
-				//LastCycleStart = CurrentTime;
-			}
+
+
+				LastFrameStart = GetSeconds();
+				
+				// Write the number of frames to Output for now.
+				SendIntToDebug(FrameCount++);
+				
+			}  // ****************End of Game Loop
 			
         }
         else

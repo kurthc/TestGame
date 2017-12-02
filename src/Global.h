@@ -24,6 +24,7 @@ typedef uint64_t uint64;
 global_variable int GameWindowWidth = 1280;
 global_variable int GameWindowHeight = 720;
 global_variable int TargetFPS = 60;
+global_variable int32_t CountsPerSecond;
 
 struct keys_down
 {

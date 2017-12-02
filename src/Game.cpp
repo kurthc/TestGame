@@ -11,7 +11,26 @@ void GameStateInitialize(game_state *GameState)
 	GameState->Hero.Width = 20;
 	GameState->Hero.Height = 20;
 	GameState->Hero.Color = HMRGB(255,0,0);
-	GameState->Hero.Speed = 8;
+	GameState->Hero.Speed = 2;
+
+	GameState->GameMap = CreateBlankMap(20, 10);
+	//GameState->GameMap.Width
+	//((uint8)GameState->GameMap->Bytes)[]
+
+}
+
+
+game_map *CreateBlankMap(int Width, int Height)
+{
+	game_map GameMap = {};
+	GameMap.Width = Width;
+	GameMap.Height = Height;
+	GameMap.Bytes = new uint8[GameMap.Width * GameMap.Height];
+	for (int i = 0; i < Width*Height; i++)
+	{
+		*((uint8 *)GameMap.Bytes + i) = 0;
+	}
+	return &GameMap;
 }
 
 void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen_buffer *GameBuffer)
