@@ -106,8 +106,9 @@ void DrawMap(game_state *GameState, game_offscreen_buffer *Buffer)
 
 			// For now, draw 0 = black, 1 = green
 			int32 Color = ((uint8 *)GameMap->Bytes)[y*GameMap->Height + x] * (255 << 8);          //HMRGB(0,255,0);
-			//if (GameMap->Bytes[y*GameMap->Width + x])
-			DrawRectangle(Buffer, (int)Tile.x, (int)Tile.y, (int)Tile.Width, (int)Tile.Height, 10000*(Tile.x + Tile.y));
+
+			//DrawRectangle(Buffer, (int)Tile.x, (int)Tile.y, (int)Tile.Width, (int)Tile.Height, 10000*(Tile.x + Tile.y));
+			DrawRectangle(Buffer,  Tile, 10000 * (Tile.x + Tile.y));
 			//DrawRectangle(Buffer, (int)Tile.x, (int)Tile.y, (int)Tile.Width, (int)Tile.Height, Color);
 		}
 	}

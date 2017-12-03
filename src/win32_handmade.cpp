@@ -239,7 +239,7 @@ WinMain(HINSTANCE Instance,
 
     if(RegisterClassA(&WindowClass))
     {
-        HWND Window = CreateWindowExA(0, WindowClass.lpszClassName, "Handmade Hero", WS_OVERLAPPEDWINDOW|WS_VISIBLE,
+        HWND Window = CreateWindowExA(0, WindowClass.lpszClassName, "CAK Test Game", WS_OVERLAPPEDWINDOW|WS_VISIBLE,
                 CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, Instance, 0);
         if(Window)
         {
@@ -268,25 +268,10 @@ WinMain(HINSTANCE Instance,
             {
 				// Handle Windows messages, process the game, and render the buffer.
 				Win32HandleMessages();
-
-				//// Loop for as long as we have messages.
-				//MSG Message;
-				//while (PeekMessage(&Message, 0, 0, 0, PM_REMOVE))
-				//{
-				//	if (Message.message == WM_QUIT)
-				//	{
-				//		GlobalRunning = false;
-				//	}
-
-				//	TranslateMessage(&Message);
-				//	DispatchMessageA(&Message);
-				//}
-
-
 				GameStateProcess(&GameState, &KeysDown, &GameBuffer);
 				RenderBuffer(&GameState, &GameBuffer);
 
-				//
+				// Do something with sleep here?
 				CurrentTime = GetSeconds();
 				while (CurrentTime - LastFrameStart < (1 / TargetFPS))
 				{
@@ -299,7 +284,6 @@ WinMain(HINSTANCE Instance,
                 win32_window_dimension Dimension = Win32GetWindowDimension(Window);
                 Win32DisplayBufferInWindow(&GlobalBackBuffer, DeviceContext,
                                            Dimension.Width, Dimension.Height);
-
 
 				LastFrameStart = GetSeconds();
 				
