@@ -2,18 +2,9 @@
 
 #include "Global.h"
 #include "Math.h"
+#include <list>
 
-#define MAX_PROJECTILES 10
-
-struct rect
-{
-	int x;
-	int y;
-	int Width;
-	int Height;
-};
-
-struct floatrect
+struct rectangle
 {
 	float x;
 	float y;
@@ -24,63 +15,55 @@ struct floatrect
 class hero
 {
 	public:
-		Vector2 Position;
+		vec2 Position;
 		int Width;
 		int Height;
 		int Color;
 		float Speed;
-		Vector2 HeroDirection;
-		//Direction HeroDirection;
+		vec2 HeroDirection;
 };
 
-//class projectile
-//{
-//	Vector2 Position;
-//	Vector2 Velocity;
-//
-//};
-//
-//class projectiles
-//{
-//	projectile Projectile[MAX_PROJECTILES];
-//	int ProjectileCount;
-//};
+class snake_segment
+{
+public:
+	int x;
+	int y;
+
+};
+
+class snake
+{
+public:
+	std::list<snake_segment> Segments;
+};
 
 class game_map
 {
-	public:
-		int Width;
-		int Height;
-		void *Bytes;
+public:
+	int Width;
+	int Height;
+	void *Bytes;
 };
 
 class game_state
 {
-	public:
-		hero Hero;
-		//projectile Projectiles[MAX_PROJECTILES];
-		int GameDisplayLeft = 50;
-		int GameDisplayTop = 50;
-		int GameDisplayWidth = 600;
-		int GameDisplayHeight = 600;
+public:
+	hero Hero;
+	snake Snake;
 
-		game_map *GameMap;
+	rectangle GameboardDisplayRegion = { 50, 50, 600, 600 };
+	game_map *GameMap;
 };
 
 class game_offscreen_buffer
 {
-	// NOTE: Pixels are always 32-bits wide, Memory Order BB GG RR XX
-	public:
-		void *Memory;
-		int Width;
-		int Height;
-		int Pitch;
+// NOTE: Pixels are always 32-bits wide, Memory Order BB GG RR XX
+public:
+	void *Memory;
+	int Width;
+	int Height;
+	int Pitch;
 };
-
-
-
-//global_variable int GameAreaWidth = 1000;
-//global_variable int GameAreaHeight = 600;
 
 
 game_map *CreateBlankMap(int Width, int Height);
@@ -89,4 +72,7 @@ void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen
 void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer);
 internal void ClearBuffer(game_offscreen_buffer *Buffer);
 internal void DrawRectangle(game_offscreen_buffer *Buffer, int X, int Y, int Width, int Height, int32_t Color);
+internal void DrawRectangle(game_offscreen_buffer *Buffer, rectangle Rect, int32_t Color);
 void SetCheckerboardMap(game_map *GameMap);
+rectangle ConvertMapTileToDisplayRectangle(rectangle r, int MaxX, int MaxY, int x, int y);
+rectangle ConvertMapTileToDisplayRectangle(float Left, float Top, float Width, float Height, int MaxX, int MaxY, int x, int y);

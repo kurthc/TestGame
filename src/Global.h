@@ -21,6 +21,10 @@ typedef uint64_t uint64;
 #define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 
+#define COLOR_WHITE = HMRGB(255, 255, 255);
+#define COLOR_RED = HMRGB(255, 0, 0);
+#define COLOR_GREEN = HMRGB(0, 255, 0);
+
 global_variable int GameWindowWidth = 1280;
 global_variable int GameWindowHeight = 720;
 global_variable int TargetFPS = 30;
