@@ -5,8 +5,21 @@
 
 #define MAX_PROJECTILES 10
 
-//enum Direction { DirectionRight = 0, DirectionUp = 1, DirectionLeft = 2, DirectionDown = 3 };
+struct rect
+{
+	int x;
+	int y;
+	int Width;
+	int Height;
+};
 
+struct floatrect
+{
+	float x;
+	float y;
+	float Width;
+	float Height;
+};
 
 class hero
 {
@@ -35,18 +48,22 @@ class hero
 
 class game_map
 {
-public:
-	int Width;
-	int Height;
-	void *Bytes;
+	public:
+		int Width;
+		int Height;
+		void *Bytes;
 };
 
 class game_state
 {
-	
 	public:
 		hero Hero;
 		//projectile Projectiles[MAX_PROJECTILES];
+		int GameDisplayLeft = 50;
+		int GameDisplayTop = 50;
+		int GameDisplayWidth = 600;
+		int GameDisplayHeight = 600;
+
 		game_map *GameMap;
 };
 
@@ -62,21 +79,8 @@ class game_offscreen_buffer
 
 
 
-global_variable int GameAreaWidth = 1000;
-global_variable int GameAreaHeight = 600;
-
-
-/*
-class game_map
-{
-	int Rows;
-	int Columns;
-	int (*Square)[][];
-}
-
-
-
-*/
+//global_variable int GameAreaWidth = 1000;
+//global_variable int GameAreaHeight = 600;
 
 
 game_map *CreateBlankMap(int Width, int Height);
@@ -85,3 +89,4 @@ void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen
 void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer);
 internal void ClearBuffer(game_offscreen_buffer *Buffer);
 internal void DrawRectangle(game_offscreen_buffer *Buffer, int X, int Y, int Width, int Height, int32_t Color);
+void SetCheckerboardMap(game_map *GameMap);

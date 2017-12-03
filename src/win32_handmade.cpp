@@ -62,8 +62,6 @@ internal void
 Win32DisplayBufferInWindow(win32_offscreen_buffer *Buffer,
                            HDC DeviceContext, int WindowWidth, int WindowHeight)
 {
-	SendStringToDebug("Win32DisplayBufferInWindow");
-
 	//OutputDebugStringA("Win32DisplayBufferInWindow");
 	// TODO(casey): Aspect ratio correction
     // TODO(casey): Play with stretch modes
@@ -156,65 +154,6 @@ Win32MainWindowCallback(HWND Window,
 			}
 		} break;
 
-        //case WM_SYSKEYDOWN:
-        //case WM_SYSKEYUP:
-        //case WM_KEYDOWN:
-        //case WM_KEYUP:
-        //{
-        //    uint32 VKCode = WParam;
-        //    bool WasDown = ((LParam & (1 << 30)) != 0);
-        //    bool IsDown = ((LParam & (1 << 31)) == 0);
-        //    if(WasDown != IsDown)
-        //    {
-        //        if(VKCode == 'W')
-        //        {
-        //        }
-        //        else if(VKCode == 'A')
-        //        {
-        //        }
-        //        else if(VKCode == 'S')
-        //        {
-        //        }
-        //        else if(VKCode == 'D')
-        //        {
-        //        }
-        //        else if(VKCode == 'Q')
-        //        {
-        //        }
-        //        else if(VKCode == 'E')
-        //        {
-        //        }
-        //        else if(VKCode == VK_UP)
-        //        {
-        //        }
-        //        else if(VKCode == VK_LEFT)
-        //        {
-        //        }
-        //        else if(VKCode == VK_DOWN)
-        //        {
-        //        }
-        //        else if(VKCode == VK_RIGHT)
-        //        {
-        //        }
-        //        else if(VKCode == VK_ESCAPE)
-        //        {
-        //            OutputDebugStringA("ESCAPE: ");
-        //            if(IsDown)
-        //            {
-        //                OutputDebugStringA("IsDown ");
-        //            }
-        //            if(WasDown)
-        //            {
-        //                OutputDebugStringA("WasDown");
-        //            }
-        //            OutputDebugStringA("\n");
-        //        }
-        //        else if(VKCode == VK_SPACE)
-        //        {
-        //        }
-        //    }
-        //} break;
-        
         case WM_PAINT:
         {
             PAINTSTRUCT Paint;
@@ -244,12 +183,7 @@ void SendIntToDebug(int n)
 
 void SendStringToDebug(char *Message)
 {
-	//LARGE_INTEGER Counts;
-	//QueryPerformanceCounter(&Counts);
-	//char MsgBuffer[256];
-	//wsprintf(MsgBuffer, "%d\n", (int)Counts.QuadPart);
 	OutputDebugStringA(Message);
-//	OutputDebugStringA(MsgBuffer);
 }
 
 float GetSeconds()
@@ -273,6 +207,7 @@ void Win32HandleMessages()
 		TranslateMessage(&Message);
 		DispatchMessageA(&Message);
 	}
+	return;
 }
 
 
@@ -333,6 +268,21 @@ WinMain(HINSTANCE Instance,
             {
 				// Handle Windows messages, process the game, and render the buffer.
 				Win32HandleMessages();
+
+				//// Loop for as long as we have messages.
+				//MSG Message;
+				//while (PeekMessage(&Message, 0, 0, 0, PM_REMOVE))
+				//{
+				//	if (Message.message == WM_QUIT)
+				//	{
+				//		GlobalRunning = false;
+				//	}
+
+				//	TranslateMessage(&Message);
+				//	DispatchMessageA(&Message);
+				//}
+
+
 				GameStateProcess(&GameState, &KeysDown, &GameBuffer);
 				RenderBuffer(&GameState, &GameBuffer);
 
