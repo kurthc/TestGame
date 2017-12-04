@@ -111,12 +111,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Buffer.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Math.cpp" />
     <ClCompile Include="src\win32_handmade.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="src\Buffer.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\Global.h" />
     <ClInclude Include="src\Math.h" />

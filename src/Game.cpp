@@ -1,7 +1,4 @@
-
 #include "Game.h"
-//#include "win32_handmade.h"
-
 
 void GameStateInitialize(game_state *GameState)
 {
@@ -78,13 +75,15 @@ void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen
 
 }
 
+
+
 rectangle ConvertMapTileToDisplayRectangle(rectangle r, int MaxX, int MaxY, int x, int y)
 {
 	return ConvertMapTileToDisplayRectangle(r.x, r.y, r.Width, r.Height, MaxX, MaxY, x, y);
 }
 
 rectangle ConvertMapTileToDisplayRectangle(float DisplayRegionLeft, float DisplayRegionTop, float DisplayRegionWidth, float DisplayRegionHeight,
-		int MapMaxX, int MapMaxY, int MapX, int MapY)
+	int MapMaxX, int MapMaxY, int MapX, int MapY)
 {
 	rectangle Rect;
 
@@ -107,8 +106,8 @@ void DrawMap(game_state *GameState, game_offscreen_buffer *Buffer)
 			// For now, draw 0 = black, 1 = green
 			int32 Color = ((uint8 *)GameMap->Bytes)[y*GameMap->Height + x] * (255 << 8);          //HMRGB(0,255,0);
 
-			//DrawRectangle(Buffer, (int)Tile.x, (int)Tile.y, (int)Tile.Width, (int)Tile.Height, 10000*(Tile.x + Tile.y));
-			DrawRectangle(Buffer,  Tile, 10000 * (Tile.x + Tile.y));
+																								  //DrawRectangle(Buffer, (int)Tile.x, (int)Tile.y, (int)Tile.Width, (int)Tile.Height, 10000*(Tile.x + Tile.y));
+			DrawRectangle(Buffer, Tile, 10000 * (Tile.x + Tile.y));
 			//DrawRectangle(Buffer, (int)Tile.x, (int)Tile.y, (int)Tile.Width, (int)Tile.Height, Color);
 		}
 	}
@@ -154,7 +153,7 @@ internal void ClearBuffer(game_offscreen_buffer *Buffer)
 internal void DrawRectangle(game_offscreen_buffer *Buffer, int Left, int Top, int Width, int Height, int32_t Color)
 {
 	int32_t* Pixel = (int32_t*)Buffer->Memory;
-	
+
 	for (int y = MAX(Top, 0); y < Top + Height && y < Buffer->Height; y++)
 	{
 		for (int x = MAX(Left, 0); x < Left + Width && x < Buffer->Width; x++)

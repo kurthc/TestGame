@@ -2,6 +2,7 @@
 
 #include <windows.h>
 #include <xinput.h>
+#include "Game.h"
 
 
 struct win32_offscreen_buffer

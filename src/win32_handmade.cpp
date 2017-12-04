@@ -9,7 +9,6 @@
 
 #include "Global.h"
 #include "win32_handmade.h"
-#include "Game.h"
 
 
 internal win32_window_dimension
