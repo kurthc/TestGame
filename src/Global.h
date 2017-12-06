@@ -30,6 +30,14 @@ global_variable int GameWindowHeight = 720;
 global_variable int TargetFPS = 30;
 global_variable int32_t CountsPerSecond;
 
+struct rectangle
+{
+	float x;
+	float y;
+	float Width;
+	float Height;
+};
+
 struct keys_down
 {
 	int Left;

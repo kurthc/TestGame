@@ -1,7 +1,7 @@
 #pragma once
 
 #include <windows.h>
-#include <xinput.h>
+//#include <xinput.h>
 #include "Game.h"
 
 

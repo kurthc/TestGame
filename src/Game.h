@@ -5,23 +5,9 @@
 #include "Buffer.h"
 #include <list>
 
-struct rectangle
-{
-	float x;
-	float y;
-	float Width;
-	float Height;
-};
 
-class game_offscreen_buffer
-{
-	// NOTE: Pixels are always 32-bits wide, Memory Order BB GG RR XX
-public:
-	void *Memory;
-	int Width;
-	int Height;
-	int Pitch;
-};
+
+
 
 class hero
 {
@@ -48,6 +34,7 @@ class snake
 {
 public:
 	std::list<snake_segment> Segments;
+	int Color;
 };
 
 class game_map
@@ -78,8 +65,5 @@ void SetCheckerboardMap(game_map *GameMap);
 
 
 void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer);
-internal void ClearBuffer(game_offscreen_buffer *Buffer);
-internal void DrawRectangle(game_offscreen_buffer *Buffer, int X, int Y, int Width, int Height, int32_t Color);
-internal void DrawRectangle(game_offscreen_buffer *Buffer, rectangle Rect, int32_t Color);
 rectangle ConvertMapTileToDisplayRectangle(rectangle r, int MaxX, int MaxY, int x, int y);
 rectangle ConvertMapTileToDisplayRectangle(float Left, float Top, float Width, float Height, int MaxX, int MaxY, int x, int y);

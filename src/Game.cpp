@@ -11,6 +11,15 @@ void GameStateInitialize(game_state *GameState)
 	GameState->GameMap = CreateBlankMap(50, 50);
 	SetCheckerboardMap(GameState->GameMap);
 
+	for (int i = 0; i < 1; i++)
+	{
+		snake_segment *ss = new snake_segment();
+		ss->Location.SetXY(4, 4+i);
+		GameState->Snake.Segments.push_back(*ss);
+	}
+	GameState->Snake.Color = HMRGB(0, 255, 0);
+	
+
 }
 
 void SetCheckerboardMap(game_map *GameMap)
@@ -127,43 +136,31 @@ void DrawBorder(game_state *GameState, game_offscreen_buffer *Buffer, int Border
 	DrawRectangle(Buffer, Inner, HMRGB(0, 0, 0));
 }
 
+//void DrawSnake(game_state *GameState, game_offscreen_buffer *Buffer)
+//{
+//	//snake *Snake = GameState
+//	std::list<snake_segment> Segments = GameState->Snake.Segments;
+//
+//	for (int i = 0; i < Segments.size; i++)
+//	{
+//		//ConvertMapTileToDisplayRectangle(GameState->GameboardDisplayRegion, GameState->GameMap->Width, GameState->GameMap->Height,Segments[i])
+//		//********** Working
+//	}
+//}
+
 void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer)
 {
 	ClearBuffer(Buffer);
 	DrawBorder(GameState, Buffer, 5, HMRGB(255, 0, 255));
 	DrawMap(GameState, Buffer);
 
-
 	hero *Hero = &(GameState->Hero);
 	DrawRectangle(Buffer, (int)Hero->Position.X, (int)Hero->Position.Y, Hero->Width, Hero->Height, Hero->Color);
 
+	//DrawSnake(GameState, Buffer);
+
 }
 
 
-internal void ClearBuffer(game_offscreen_buffer *Buffer)
-{
-	int32_t *Pixel = (int32_t*)Buffer->Memory;
 
-	for (int i = 0; i < Buffer->Width * Buffer->Height; i++)
-	{
-		Pixel[i] = 0;
-	}
-}
 
-internal void DrawRectangle(game_offscreen_buffer *Buffer, int Left, int Top, int Width, int Height, int32_t Color)
-{
-	int32_t* Pixel = (int32_t*)Buffer->Memory;
-
-	for (int y = MAX(Top, 0); y < Top + Height && y < Buffer->Height; y++)
-	{
-		for (int x = MAX(Left, 0); x < Left + Width && x < Buffer->Width; x++)
-		{
-			Pixel[y*Buffer->Width + x] = Color;
-		}
-	}
-}
-
-internal void DrawRectangle(game_offscreen_buffer *Buffer, rectangle Rect, int32_t Color)
-{
-	DrawRectangle(Buffer, Rect.x, Rect.y, Rect.Width, Rect.Height, Color);
-}
