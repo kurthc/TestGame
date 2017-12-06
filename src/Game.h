@@ -11,20 +11,20 @@
 
 class hero
 {
-	public:
-		vec2 Position;
-		int Width;
-		int Height;
-		int Color;
-		float Speed;
-		vec2 HeroDirection;
+public:
+	vec2 Position;
+	int Width;
+	int Height;
+	int Color;
+	float Speed;
+	vec2 HeroDirection;
 };
 
 class snake_segment
 {
 public:
 	vec2 Location;
-
+	int Color;
 	//int x;
 	//int y;
 
@@ -35,6 +35,8 @@ class snake
 public:
 	std::list<snake_segment> Segments;
 	int Color;
+	vec2 Direction;
+	float Timer;
 };
 
 class game_map
