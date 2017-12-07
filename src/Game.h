@@ -6,9 +6,6 @@
 #include <list>
 
 
-
-
-
 class hero
 {
 public:
@@ -24,7 +21,9 @@ class snake_segment
 {
 public:
 	vec2 Location;
+	vec2 Direction;
 	int Color;
+
 	//int x;
 	//int y;
 
@@ -34,9 +33,12 @@ class snake
 {
 public:
 	std::list<snake_segment> Segments;
+	float Speed;
 	int Color;
-	vec2 Direction;
 	float Timer;
+
+	void snake::SetDirection(int x, int y);
+	void snake::SetDirection(vec2 Direction);
 };
 
 class game_map
@@ -63,7 +65,7 @@ game_map *CreateBlankMap(int Width, int Height);
 void GameStateInitialize(game_state *GameState);
 void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen_buffer *Buffer);
 void SetCheckerboardMap(game_map *GameMap);
-
+void ProcessSnake(game_state *GameState);
 
 
 void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer);

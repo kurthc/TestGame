@@ -11,15 +11,27 @@ void GameStateInitialize(game_state *GameState)
 	GameState->GameMap = CreateBlankMap(50, 50);
 	SetCheckerboardMap(GameState->GameMap);
 
-	for (int i = 0; i < 5; i++)
+	//snake_segment *LastSegment;
+	vec2 LastSegmentLocation = { 0,0 };
+	for (int i = 0; i < 9; i++)
 	{
 		snake_segment *ss = new snake_segment();
-		ss->Location.SetXY(6, 4+i);
+		ss->Location.SetXY(6, 15-i);
 		ss->Color = HMRGB(0, 255 - i * 30, 0);
+		if (i == 0)
+		{
+			ss->Direction = UnitVectorY;
+		}
+		else
+		{
+			ss->Direction = LastSegmentLocation - ss->Location;
+		}
+		LastSegmentLocation = ss->Location;
 		GameState->Snake.Segments.push_back(*ss);
 	}
 	GameState->Snake.Color = HMRGB(0, 255, 0);
-	
+	GameState->Snake.Speed = 5;
+	GameState->Snake.Timer = 0;
 
 }
 
@@ -59,23 +71,27 @@ void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen
 	
 	if (KeysDown->Left)
 	{
-		GameState->Hero.HeroDirection = -UnitVectorX;
-		GameState->Hero.Position = GameState->Hero.Position = GameState->Hero.Position + GameState->Hero.HeroDirection * (GameState->Hero.Speed);
+		GameState->Snake.SetDirection(-UnitVectorX);
+		//GameState->Hero.HeroDirection = -UnitVectorX;
+		//GameState->Hero.Position = GameState->Hero.Position = GameState->Hero.Position + GameState->Hero.HeroDirection * (GameState->Hero.Speed);
 	}
 	if (KeysDown->Right)
 	{
-		GameState->Hero.HeroDirection = UnitVectorX;
-		GameState->Hero.Position = GameState->Hero.Position = GameState->Hero.Position + GameState->Hero.HeroDirection * (GameState->Hero.Speed);
+		GameState->Snake.SetDirection(UnitVectorX);
+		//GameState->Hero.HeroDirection = UnitVectorX;
+		//GameState->Hero.Position = GameState->Hero.Position = GameState->Hero.Position + GameState->Hero.HeroDirection * (GameState->Hero.Speed);
 	}
 	if (KeysDown->Up)
 	{
-		GameState->Hero.HeroDirection = -UnitVectorY;
-		GameState->Hero.Position = GameState->Hero.Position = GameState->Hero.Position + GameState->Hero.HeroDirection * (GameState->Hero.Speed);
+		GameState->Snake.SetDirection(-UnitVectorY);
+		//GameState->Hero.HeroDirection = -UnitVectorY;
+		//GameState->Hero.Position = GameState->Hero.Position = GameState->Hero.Position + GameState->Hero.HeroDirection * (GameState->Hero.Speed);
 	}
 	if (KeysDown->Down)
 	{
-		GameState->Hero.HeroDirection = UnitVectorY;
-		GameState->Hero.Position = GameState->Hero.Position = GameState->Hero.Position + GameState->Hero.HeroDirection * (GameState->Hero.Speed);
+		GameState->Snake.SetDirection(UnitVectorY);
+		//GameState->Hero.HeroDirection = UnitVectorY;
+		//GameState->Hero.Position = GameState->Hero.Position = GameState->Hero.Position + GameState->Hero.HeroDirection * (GameState->Hero.Speed);
 	}
 	if (KeysDown->Space)
 	{
@@ -83,8 +99,31 @@ void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen
 		//GameState->Hero.HeroDirection = DirectionDown;
 	}
 
+	ProcessSnake(GameState);
 }
 
+void ProcessSnake(game_state *GameState)
+{
+	snake *Snake = &(GameState->Snake);
+
+	std::list<snake_segment> *Segments = &((*Snake).Segments);
+	(*Snake).Timer += (*Snake).Speed / 30;   // FPS?
+	if ((*Snake).Timer >= 1)
+	{
+		vec2 LastLocation = { 0,0 };
+		for (std::list<snake_segment>::iterator it = (*Segments).begin(); it != (*Segments).end(); it++)
+		{
+			(*it).Location = (*it).Location + (*it).Direction;
+			if (it != (*Segments).begin())
+			{
+				(*it).Direction = LastLocation - (*it).Location;
+			}
+			LastLocation = (*it).Location;
+		}
+		(*Snake).Timer = 0;
+	}
+
+}
 
 
 rectangle ConvertMapTileToDisplayRectangle(rectangle r, int MaxX, int MaxY, int x, int y)
@@ -153,7 +192,6 @@ void DrawSnake(game_state *GameState, game_offscreen_buffer *Buffer)
 	{
 		vec2 Location = (*it).Location;
 		rectangle Rec = ConvertMapTileToDisplayRectangle(GameState->GameboardDisplayRegion, GameState->GameMap->Width, GameState->GameMap->Height, Location.X, Location.Y);
-		//DrawRectangle(Buffer, Rec, GameState->Snake.Color);
 		DrawRectangle(Buffer, Rec, it->Color);
 		
 	}
@@ -173,5 +211,16 @@ void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer)
 }
 
 
+void snake::SetDirection(int x, int y)
+{
+	//this->Direction.SetXY(x, y);
+	this->Segments.front().Direction.SetXY(x, y);
+	
+}
+
+void snake::SetDirection(vec2 Direction)
+{
+	this->SetDirection(Direction.X, Direction.Y);
+}
 
 
