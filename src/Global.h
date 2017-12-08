@@ -38,6 +38,14 @@ struct rectangle
 	float Height;
 };
 
+struct intrectangle
+{
+	int x;
+	int y;
+	int Width;
+	int Height;
+};
+
 struct keys_down
 {
 	int Left;

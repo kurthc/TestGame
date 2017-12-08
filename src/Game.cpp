@@ -12,15 +12,15 @@ void GameStateInitialize(game_state *GameState)
 	SetCheckerboardMap(GameState->GameMap);
 
 	//snake_segment *LastSegment;
-	vec2 LastSegmentLocation = { 0,0 };
-	for (int i = 0; i < 9; i++)
+	intvec2 LastSegmentLocation = { 0,0 };
+	for (int i = 0; i < 19; i++)
 	{
 		snake_segment *ss = new snake_segment();
-		ss->Location.SetXY(6, 15-i);
-		ss->Color = HMRGB(0, 255 - i * 30, 0);
+		ss->Location.SetXY(6, 25-i);
+		ss->Color = HMRGB(0, 255 - i * 13, 0);
 		if (i == 0)
 		{
-			ss->Direction = UnitVectorY;
+			ss->Direction = intUnitVectorY;
 		}
 		else
 		{
@@ -30,7 +30,7 @@ void GameStateInitialize(game_state *GameState)
 		GameState->Snake.Segments.push_back(*ss);
 	}
 	GameState->Snake.Color = HMRGB(0, 255, 0);
-	GameState->Snake.Speed = 5;
+	GameState->Snake.Speed = 4;
 	GameState->Snake.Timer = 0;
 
 }
@@ -99,31 +99,11 @@ void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen
 		//GameState->Hero.HeroDirection = DirectionDown;
 	}
 
-	ProcessSnake(GameState);
+	//ProcessSnake(GameState);
+	ProcessSnake(&(GameState->Snake));
 }
 
-void ProcessSnake(game_state *GameState)
-{
-	snake *Snake = &(GameState->Snake);
-
-	std::list<snake_segment> *Segments = &((*Snake).Segments);
-	(*Snake).Timer += (*Snake).Speed / 30;   // FPS?
-	if ((*Snake).Timer >= 1)
-	{
-		vec2 LastLocation = { 0,0 };
-		for (std::list<snake_segment>::iterator it = (*Segments).begin(); it != (*Segments).end(); it++)
-		{
-			(*it).Location = (*it).Location + (*it).Direction;
-			if (it != (*Segments).begin())
-			{
-				(*it).Direction = LastLocation - (*it).Location;
-			}
-			LastLocation = (*it).Location;
-		}
-		(*Snake).Timer = 0;
-	}
-
-}
+//void ProcessSnake(game_state *GameState)
 
 
 rectangle ConvertMapTileToDisplayRectangle(rectangle r, int MaxX, int MaxY, int x, int y)
@@ -151,20 +131,7 @@ void DrawMap(game_state *GameState, game_offscreen_buffer *Buffer)
 		for (int x = 0; x < GameMap->Width; x++)
 		{
 			rectangle Tile = ConvertMapTileToDisplayRectangle(GameState->GameboardDisplayRegion, GameMap->Width, GameMap->Height, x, y);
-			int32 Color;
-
-			// Draw a cool gradient
-			//Color = 10000 * (Tile.x + Tile.y);
-			//DrawRectangle(Buffer, Tile, Color);
-
-			// For now, draw 0 = black, 1 = green
-			//Color = ((uint8 *)GameMap->Bytes)[y*GameMap->Height + x] * (255 << 8);          //HMRGB(0,255,0);
-			//DrawRectangle(Buffer, Tile, Color);
-
 			DrawRectangle(Buffer, Tile.x, Tile.y, 2, 2, HMRGB(127, 127, 127));
-
-			//DrawRectangle(Buffer, (int)Tile.x, (int)Tile.y, (int)Tile.Width, (int)Tile.Height, 10000*(Tile.x + Tile.y));
-			//DrawRectangle(Buffer, (int)Tile.x, (int)Tile.y, (int)Tile.Width, (int)Tile.Height, Color);
 		}
 	}
 }
@@ -190,7 +157,7 @@ void DrawSnake(game_state *GameState, game_offscreen_buffer *Buffer)
 
 	for (std::list<snake_segment>::iterator it = Segments.begin(); it != Segments.end(); it++)
 	{
-		vec2 Location = (*it).Location;
+		intvec2 Location = (*it).Location;
 		rectangle Rec = ConvertMapTileToDisplayRectangle(GameState->GameboardDisplayRegion, GameState->GameMap->Width, GameState->GameMap->Height, Location.X, Location.Y);
 		DrawRectangle(Buffer, Rec, it->Color);
 		
@@ -211,16 +178,5 @@ void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer)
 }
 
 
-void snake::SetDirection(int x, int y)
-{
-	//this->Direction.SetXY(x, y);
-	this->Segments.front().Direction.SetXY(x, y);
-	
-}
-
-void snake::SetDirection(vec2 Direction)
-{
-	this->SetDirection(Direction.X, Direction.Y);
-}
 
 

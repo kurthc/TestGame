@@ -114,6 +114,7 @@
     <ClCompile Include="src\Buffer.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Math.cpp" />
+    <ClCompile Include="src\Snake.cpp" />
     <ClCompile Include="src\win32_handmade.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +123,7 @@
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\Global.h" />
     <ClInclude Include="src\Math.h" />
+    <ClInclude Include="src\Snake.h" />
     <ClInclude Include="src\win32_handmade.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

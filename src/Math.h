@@ -10,25 +10,20 @@ public:
 	vec2(float, float);
 
 	void SetXY(float X, float Y);
-	
-	//vec2 operator+(vec2 v)
-	//{
-	//	vec2 vSum;
-	//	vSum.X = this->X + v.X;
-	//	vSum.Y = this->Y + v.Y;
-	//	return vSum;
-	//}
-
-	//vec2 operator*(float s)
-	//{
-	//	vec2 vResult;
-	//	vResult.X = this->X * s;
-	//	vResult.Y = this->Y * s;
-	//	return vResult;
-	//}
-
-	
 };
+
+class intvec2
+{
+public:
+	int X;
+	int Y;
+
+	intvec2();
+	intvec2(int, int);
+
+	void SetXY(int X, int Y);
+};
+
 
 vec2 operator+(vec2 v1, vec2 v2);
 vec2 & operator+=(vec2 &v1, vec2 v2);
@@ -38,11 +33,16 @@ vec2 & operator-=(vec2 &v1, vec2 v2);
 vec2 operator*(float a, vec2 v);
 vec2 operator*(vec2 v, float a);
 
+intvec2 operator+(intvec2 v1, intvec2 v2);
+intvec2 & operator+=(intvec2 &v1, intvec2 v2);
+intvec2 operator-(intvec2 v);
+intvec2 operator-(intvec2 v1, intvec2 v2);
+intvec2 & operator-=(intvec2 &v1, intvec2 v2);
+intvec2 operator*(int a, intvec2 v);
+intvec2 operator*(intvec2 v, int a);
 
 static vec2 UnitVectorX = vec2(1, 0);
 static vec2 UnitVectorY = vec2(0, 1);
-//
-//static vec2 DirectionRight = vec2(1, 0);
-//static vec2 DirectionUp = vec2(0, -1);
-//static vec2 DirectionLeft = vec2(-1, 0);
-//static vec2 DirectionDown = vec2(0, 1);
+
+static intvec2 intUnitVectorX = intvec2(1, 0);
+static intvec2 intUnitVectorY = intvec2(0, 1);
