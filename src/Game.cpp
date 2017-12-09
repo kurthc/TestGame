@@ -3,7 +3,7 @@
 void GameStateInitialize(game_state *GameState, game_offscreen_buffer *Buffer)
 {
 
-	GameState->GameMap = CreateBlankMap(50, 50);
+	GameState->GameMap = CreateBlankMap(30, 20);
 
 	Buffer->MapRegionInUse.x = Buffer->MapRegionTotal.x;
 	Buffer->MapRegionInUse.y = Buffer->MapRegionTotal.y;
@@ -28,7 +28,7 @@ void GameStateInitialize(game_state *GameState, game_offscreen_buffer *Buffer)
 		GameState->Snake.Segments.push_back(*ss);
 	}
 	GameState->Snake.Color = HMRGB(0, 255, 0);
-	GameState->Snake.Speed = 4;
+	GameState->Snake.Speed = 2;
 	GameState->Snake.Timer = 0;
 
 	GameState->NewPelletTimer = 3;
@@ -89,20 +89,26 @@ void ProcessTimers(game_state *GameState)
 	}
 }
 
-rectangle ConvertMapTileToDisplayRectangle(rectangle r, int MaxX, int MaxY, int x, int y)
+intrectangle ConvertMapTileToDisplayRectangle(intrectangle r, int MaxX, int MaxY, int x, int y)
 {
 	return ConvertMapTileToDisplayRectangle(r.x, r.y, r.Width, r.Height, MaxX, MaxY, x, y);
 }
 
-rectangle ConvertMapTileToDisplayRectangle(float DisplayRegionLeft, float DisplayRegionTop, float DisplayRegionWidth, float DisplayRegionHeight,
+intrectangle ConvertMapTileToDisplayRectangle(int DisplayRegionLeft, int DisplayRegionTop, int DisplayRegionWidth, int DisplayRegionHeight,
 	int MapMaxX, int MapMaxY, int MapX, int MapY)
 {
-	rectangle Rect;
+	intrectangle Rect;
 
-	Rect.x = (float)MapX / MapMaxX * DisplayRegionWidth + DisplayRegionLeft;
-	Rect.y = (float)MapY / MapMaxY * DisplayRegionHeight + DisplayRegionTop;
-	Rect.Width = DisplayRegionWidth / MapMaxX;
-	Rect.Height = DisplayRegionHeight / MapMaxY;
+	float Left = (float)MapX / MapMaxX * DisplayRegionWidth + DisplayRegionLeft;
+	float Right = (float)(MapX+1) / MapMaxX * DisplayRegionWidth + DisplayRegionLeft;
+	float Top = (float)MapY / MapMaxY * DisplayRegionHeight + DisplayRegionTop;
+	float Bottom = (float)(MapY+1) / MapMaxY * DisplayRegionHeight + DisplayRegionTop;
+
+	Rect.x = (int)Left;
+	Rect.y = (int)Top;
+	Rect.Width = (int)Right - (int)Left;
+	Rect.Height = (int)Bottom - (int)Top;
+
 	return Rect;
 }
 
@@ -113,17 +119,19 @@ void DrawMap(game_state *GameState, game_offscreen_buffer *Buffer)
 	{
 		for (int x = 0; x < GameMap->Width; x++)
 		{
-			rectangle Tile = ConvertMapTileToDisplayRectangle(GameState->GameboardDisplayRegion, GameMap->Width, GameMap->Height, x, y);
+			intrectangle Tile = ConvertMapTileToDisplayRectangle(Buffer->MapRegionInUse, GameMap->Width, GameMap->Height, x, y);
 			DrawRectangle(Buffer, Tile.x, Tile.y, 2, 2, HMRGB(127, 127, 127));
 		}
 	}
 }
 
-void DrawBorder(game_state *GameState, game_offscreen_buffer *Buffer, int BorderWidth, int Color)
+void DrawBorder(game_state *GameState, game_offscreen_buffer *Buffer)
 {
-	rectangle Inner = GameState->GameboardDisplayRegion;
-	rectangle Outer = {};
-	//int BorderWidth = 5;
+	//rectangle Inner = GameState->GameboardDisplayRegion;
+	intrectangle Inner = Buffer->MapRegionInUse;
+	intrectangle Outer = {};
+	int BorderWidth = Buffer->MapBorderThickness;
+	int Color = Buffer->MapBorderColor;
 	Outer.x = Inner.x - BorderWidth;
 	Outer.y = Inner.y - BorderWidth;
 	Outer.Width = Inner.Width + 2 * BorderWidth;
@@ -141,7 +149,7 @@ void DrawSnake(game_state *GameState, game_offscreen_buffer *Buffer)
 	for (std::list<snake_segment>::iterator it = Segments.begin(); it != Segments.end(); it++)
 	{
 		intvec2 Location = (*it).Location;
-		rectangle Rec = ConvertMapTileToDisplayRectangle(GameState->GameboardDisplayRegion, GameState->GameMap->Width, GameState->GameMap->Height, Location.X, Location.Y);
+		intrectangle Rec = ConvertMapTileToDisplayRectangle(Buffer->MapRegionInUse, GameState->GameMap->Width, GameState->GameMap->Height, Location.X, Location.Y);
 		DrawRectangle(Buffer, Rec, it->Color);
 		
 	}
@@ -150,7 +158,7 @@ void DrawSnake(game_state *GameState, game_offscreen_buffer *Buffer)
 void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer)
 {
 	ClearBuffer(Buffer);
-	DrawBorder(GameState, Buffer, 5, HMRGB(255, 0, 255));
+	DrawBorder(GameState, Buffer);
 	DrawMap(GameState, Buffer);
 
 	//hero *Hero = &(GameState->Hero);

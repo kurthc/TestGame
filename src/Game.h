@@ -41,7 +41,7 @@ public:
 	std::list<pellet> Pellet;
 	float NewPelletTimer;
 
-	rectangle GameboardDisplayRegion = { 50, 50, 600, 600 };
+	//rectangle GameboardDisplayRegion = { 50, 50, 600, 600 };
 	game_map *GameMap;
 };
 
@@ -54,5 +54,5 @@ void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen
 
 void ProcessTimers(game_state *GameState);
 void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer);
-rectangle ConvertMapTileToDisplayRectangle(rectangle r, int MaxX, int MaxY, int x, int y);
-rectangle ConvertMapTileToDisplayRectangle(float Left, float Top, float Width, float Height, int MaxX, int MaxY, int x, int y);
+intrectangle ConvertMapTileToDisplayRectangle(intrectangle r, int MaxX, int MaxY, int x, int y);
+intrectangle ConvertMapTileToDisplayRectangle(int Left, int Top, int Width, int Height, int MaxX, int MaxY, int x, int y);

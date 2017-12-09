@@ -35,7 +35,8 @@ void DrawRectangle(game_offscreen_buffer *Buffer, int Left, int Top, int Width, 
 	}
 }
 
-void DrawRectangle(game_offscreen_buffer *Buffer, rectangle Rect, int32_t Color)
+void DrawRectangle(game_offscreen_buffer *Buffer, intrectangle Rect, int32_t Color)
 {
 	DrawRectangle(Buffer, Rect.x, Rect.y, Rect.Width, Rect.Height, Color);
 }
+
