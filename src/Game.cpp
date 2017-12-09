@@ -1,17 +1,15 @@
 #include "Game.h"
 
-void GameStateInitialize(game_state *GameState)
+void GameStateInitialize(game_state *GameState, game_offscreen_buffer *Buffer)
 {
-	GameState->Hero.Position.SetXY(100, 100);
-	GameState->Hero.Width = 20;
-	GameState->Hero.Height = 20;
-	GameState->Hero.Color = HMRGB(255, 0, 0);
-	GameState->Hero.Speed = 2;
 
 	GameState->GameMap = CreateBlankMap(50, 50);
-	SetCheckerboardMap(GameState->GameMap);
 
-	//snake_segment *LastSegment;
+	Buffer->MapRegionInUse.x = Buffer->MapRegionTotal.x;
+	Buffer->MapRegionInUse.y = Buffer->MapRegionTotal.y;
+	Buffer->MapRegionInUse.Height = Buffer->MapRegionTotal.Height;
+	Buffer->MapRegionInUse.Width = (float)Buffer->MapRegionTotal.Height / GameState->GameMap->Height * GameState->GameMap->Width;
+	
 	intvec2 LastSegmentLocation = { 0,0 };
 	for (int i = 0; i < 19; i++)
 	{
@@ -33,21 +31,8 @@ void GameStateInitialize(game_state *GameState)
 	GameState->Snake.Speed = 4;
 	GameState->Snake.Timer = 0;
 
-}
+	GameState->NewPelletTimer = 3;
 
-void SetCheckerboardMap(game_map *GameMap)
-{
-	int Width = GameMap->Width;
-	int Height = GameMap->Height;
-	uint8 *Bytes = (uint8 *)GameMap->Bytes;
-
-	for (int y = 0; y < Height; y++)
-	{
-		for (int x = 0; x < Width; x++)
-		{
-			Bytes[y*Width + x] = (uint8)((x + y) % 2);
-		}
-	}
 }
 
 game_map *CreateBlankMap(int Width, int Height)
@@ -67,44 +52,42 @@ void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen
 {
 	//win32_offscreen_buffer Buffer = GlobalBackBuffer;
 	
-	hero Hero = GameState->Hero;
+	//hero Hero = GameState->Hero;
 	
 	if (KeysDown->Left)
 	{
 		GameState->Snake.SetDirection(-UnitVectorX);
-		//GameState->Hero.HeroDirection = -UnitVectorX;
-		//GameState->Hero.Position = GameState->Hero.Position = GameState->Hero.Position + GameState->Hero.HeroDirection * (GameState->Hero.Speed);
 	}
 	if (KeysDown->Right)
 	{
 		GameState->Snake.SetDirection(UnitVectorX);
-		//GameState->Hero.HeroDirection = UnitVectorX;
-		//GameState->Hero.Position = GameState->Hero.Position = GameState->Hero.Position + GameState->Hero.HeroDirection * (GameState->Hero.Speed);
 	}
 	if (KeysDown->Up)
 	{
 		GameState->Snake.SetDirection(-UnitVectorY);
-		//GameState->Hero.HeroDirection = -UnitVectorY;
-		//GameState->Hero.Position = GameState->Hero.Position = GameState->Hero.Position + GameState->Hero.HeroDirection * (GameState->Hero.Speed);
 	}
 	if (KeysDown->Down)
 	{
 		GameState->Snake.SetDirection(UnitVectorY);
-		//GameState->Hero.HeroDirection = UnitVectorY;
-		//GameState->Hero.Position = GameState->Hero.Position = GameState->Hero.Position + GameState->Hero.HeroDirection * (GameState->Hero.Speed);
 	}
 	if (KeysDown->Space)
 	{
-		//GameState->Hero.Color = 10000;
-		//GameState->Hero.HeroDirection = DirectionDown;
+		GameState->Snake.AddSegments(1);
 	}
 
-	//ProcessSnake(GameState);
+	ProcessTimers(GameState);
 	ProcessSnake(&(GameState->Snake));
 }
 
-//void ProcessSnake(game_state *GameState)
-
+void ProcessTimers(game_state *GameState)
+{
+	GameState->NewPelletTimer -= 1.0f / 30;
+	if (GameState->NewPelletTimer <= 0)
+	{
+		//AddPellet(GameState);
+		GameState->NewPelletTimer = 10;
+	}
+}
 
 rectangle ConvertMapTileToDisplayRectangle(rectangle r, int MaxX, int MaxY, int x, int y)
 {
@@ -170,8 +153,8 @@ void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer)
 	DrawBorder(GameState, Buffer, 5, HMRGB(255, 0, 255));
 	DrawMap(GameState, Buffer);
 
-	hero *Hero = &(GameState->Hero);
-	DrawRectangle(Buffer, (int)Hero->Position.X, (int)Hero->Position.Y, Hero->Width, Hero->Height, Hero->Color);
+	//hero *Hero = &(GameState->Hero);
+	//DrawRectangle(Buffer, (int)Hero->Position.X, (int)Hero->Position.Y, Hero->Width, Hero->Height, Hero->Color);
 
 	DrawSnake(GameState, Buffer);
 

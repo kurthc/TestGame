@@ -53,34 +53,18 @@ Win32ResizeDIBSection(win32_offscreen_buffer *Buffer, int Width, int Height)
 
     int BitmapMemorySize = (Buffer->Width*Buffer->Height)*BytesPerPixel;
     Buffer->Memory = VirtualAlloc(0, BitmapMemorySize, MEM_COMMIT, PAGE_READWRITE);
-    Buffer->Pitch = Width*BytesPerPixel;
-    // TODO(casey): Probably clear this to black
 }
 
-internal void
-Win32DisplayBufferInWindow(win32_offscreen_buffer *Buffer,
-                           HDC DeviceContext, int WindowWidth, int WindowHeight)
+internal void Win32DisplayBufferInWindow(win32_offscreen_buffer *Buffer, HDC DeviceContext, int WindowWidth, int WindowHeight)
 {
-	//OutputDebugStringA("Win32DisplayBufferInWindow");
-	// TODO(casey): Aspect ratio correction
-    // TODO(casey): Play with stretch modes
-    StretchDIBits(DeviceContext,
-                  /*
-                  X, Y, Width, Height,
-                  X, Y, Width, Height,
-                  */
-                  0, 0, WindowWidth, WindowHeight,
-                  0, 0, Buffer->Width, Buffer->Height,
-                  Buffer->Memory,
-                  &Buffer->Info,
-                  DIB_RGB_COLORS, SRCCOPY);
+    StretchDIBits(DeviceContext, 0, 0, Buffer->Width, Buffer->Height,
+			0, 0, Buffer->Width, Buffer->Height,
+			Buffer->Memory,
+			&Buffer->Info,
+			DIB_RGB_COLORS, SRCCOPY);
 }
 
-internal LRESULT CALLBACK
-Win32MainWindowCallback(HWND Window,
-                        UINT Message,
-                        WPARAM WParam,
-                        LPARAM LParam)
+internal LRESULT CALLBACK Win32MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LPARAM LParam)
 {       
     LRESULT Result = 0;
 
@@ -88,7 +72,6 @@ Win32MainWindowCallback(HWND Window,
     {
         case WM_CLOSE:
         {
-            // TODO(casey): Handle this with a message to the user?
             GlobalRunning = false;
         } break;
 
@@ -99,7 +82,6 @@ Win32MainWindowCallback(HWND Window,
 
         case WM_DESTROY:
         {
-            // TODO(casey): Handle this as an error - recreate window?
             GlobalRunning = false;
         } break;
 
@@ -165,7 +147,6 @@ Win32MainWindowCallback(HWND Window,
 
         default:
         {
-//            OutputDebugStringA("default\n");
             Result = DefWindowProc(Window, Message, WParam, LParam);
         } break;
     }
@@ -209,13 +190,7 @@ void Win32HandleMessages()
 	return;
 }
 
-
-
-int CALLBACK
-WinMain(HINSTANCE Instance,
-        HINSTANCE PrevInstance,
-        LPSTR CommandLine,
-        int ShowCode)
+int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLine, int ShowCode)
 {
 	// QueryPerformanceCounter() returns clock time in "counts". We can convert this to seconds with QueryPerformanceFrequency,
 	// which returns counts per second (constant and determined at boot).
@@ -245,15 +220,12 @@ WinMain(HINSTANCE Instance,
             // Since we specified CS_OWNDC, we can just get one device context and use it forever because we are not sharing it with anyone.
             HDC DeviceContext = GetDC(Window);
 
-			game_offscreen_buffer GameBuffer = {};
-			GameBuffer.Height = GlobalBackBuffer.Height;
-			GameBuffer.Width = GlobalBackBuffer.Width;
-			GameBuffer.Pitch = GlobalBackBuffer.Pitch;
+			game_offscreen_buffer GameBuffer(GlobalBackBuffer.Width, GlobalBackBuffer.Height);
 			GameBuffer.Memory = GlobalBackBuffer.Memory;
 
 			// Make this static inside Game.cpp?
 			game_state GameState = {};
-			GameStateInitialize(&GameState);
+			GameStateInitialize(&GameState, &GameBuffer);
 
 			GlobalRunning = true;
 			float LastFrameStart = GetSeconds();
