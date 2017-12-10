@@ -11,6 +11,7 @@ public:
 	intvec2 Location;
 	intvec2 Direction;
 	int Color;
+	//bool IsExploding;
 };
 
 class snake

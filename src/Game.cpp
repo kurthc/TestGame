@@ -10,6 +10,7 @@ void GameStateInitialize(game_state *GameState, game_offscreen_buffer *Buffer)
 	Buffer->MapRegionInUse.Height = Buffer->MapRegionTotal.Height;
 	Buffer->MapRegionInUse.Width = (float)Buffer->MapRegionTotal.Height / GameState->GameMap->Height * GameState->GameMap->Width;
 	
+	// Create the initial snake.
 	intvec2 LastSegmentLocation = { 0,0 };
 	for (int i = 0; i < 19; i++)
 	{
@@ -51,9 +52,35 @@ game_map *CreateBlankMap(int Width, int Height)
 void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen_buffer *GameBuffer)
 {
 	//win32_offscreen_buffer Buffer = GlobalBackBuffer;
-	
 	//hero Hero = GameState->Hero;
-	
+	ProcessInput(GameState, KeysDown);
+
+	ProcessTimers(GameState);
+	ProcessSnake(&(GameState->Snake));
+
+	snake_segment *SnakeHead = &(GameState->Snake.Segments.front());
+	//pellet *PelletToDelete = 0;
+
+	std::list<pellet>::iterator it = GameState->Pellets.begin();
+	while (it != GameState->Pellets.end())
+	{
+		if (it->Location.X == SnakeHead->Location.X && it->Location.Y == SnakeHead->Location.Y)
+		{
+			// Snake head is on a pellet. Clear the pellet. (This works because the parameters are
+			// evaluated before the function call.)
+			GameState->Pellets.erase(it++);
+			GameState->Snake.AddSegments(3);
+		}
+		else
+		{
+			it++;
+		}
+	}
+
+}
+
+void ProcessInput(game_state *GameState, keys_down *KeysDown)
+{
 	if (KeysDown->Left)
 	{
 		GameState->Snake.SetDirection(-UnitVectorX);
@@ -74,9 +101,6 @@ void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen
 	{
 		GameState->Snake.AddSegments(1);
 	}
-
-	ProcessTimers(GameState);
-	ProcessSnake(&(GameState->Snake));
 }
 
 void ProcessTimers(game_state *GameState)
@@ -84,7 +108,7 @@ void ProcessTimers(game_state *GameState)
 	GameState->NewPelletTimer -= 1.0f / 30;
 	if (GameState->NewPelletTimer <= 0)
 	{
-		//AddPellet(GameState);
+		AddPellet(GameState);
 		GameState->NewPelletTimer = 10;
 	}
 }
@@ -148,7 +172,7 @@ void DrawSnake(game_state *GameState, game_offscreen_buffer *Buffer)
 
 	for (std::list<snake_segment>::iterator it = Segments.begin(); it != Segments.end(); it++)
 	{
-		intvec2 Location = (*it).Location;
+		intvec2 Location = it->Location;
 		intrectangle Rec = ConvertMapTileToDisplayRectangle(Buffer->MapRegionInUse, GameState->GameMap->Width, GameState->GameMap->Height, Location.X, Location.Y);
 		DrawRectangle(Buffer, Rec, it->Color);
 		
@@ -164,10 +188,24 @@ void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer)
 	//hero *Hero = &(GameState->Hero);
 	//DrawRectangle(Buffer, (int)Hero->Position.X, (int)Hero->Position.Y, Hero->Width, Hero->Height, Hero->Color);
 
+	for (std::list<pellet>::iterator it = GameState->Pellets.begin(); it != GameState->Pellets.end(); it++)
+	{
+		intrectangle Rec = ConvertMapTileToDisplayRectangle(Buffer->MapRegionInUse, GameState->GameMap->Width, GameState->GameMap->Height, it->Location.X, it->Location.Y);
+		DrawRectangle(Buffer, Rec, it->Color);
+	}
+
 	DrawSnake(GameState, Buffer);
 
 }
 
 
-
+void AddPellet(game_state *GameState)
+{
+	int x = (rand() % GameState->GameMap->Width);
+	int y = (rand() % GameState->GameMap->Height);
+	pellet *Pellet = new pellet();
+	Pellet->Location.SetXY(x, y);
+	Pellet->Color = HMRGB(255, 255, 255);
+	GameState->Pellets.push_back(*Pellet);
+}
 
