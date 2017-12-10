@@ -44,7 +44,8 @@ void snake::AddSegments(int NewSegmentCount)
 		snake_segment *NewSegment = new snake_segment();
 		NewSegment->Location = this->Segments.back().Location;
 		NewSegment->Direction.SetXY(0, 0);
-		NewSegment->Color = HMRGB(0, 255, 0);
+		//NewSegment->Color = HMRGB(0, 255, 0);
+		NewSegment->Color = (rand() % 256) * 256 * 256 + (rand() % 256) * 256 + (rand() % 256);
 		this->Segments.push_back(*NewSegment);
 	}
 }

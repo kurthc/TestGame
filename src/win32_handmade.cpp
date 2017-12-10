@@ -62,6 +62,10 @@ internal void Win32DisplayBufferInWindow(win32_offscreen_buffer *Buffer, HDC Dev
 			Buffer->Memory,
 			&Buffer->Info,
 			DIB_RGB_COLORS, SRCCOPY);
+
+	char *Something = "This is a test";
+	RECT r = { 10, 10, 100, 100 };
+	//DrawText(DeviceContext, Something, -1, &r, DT_LEFT);
 }
 
 internal LRESULT CALLBACK Win32MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LPARAM LParam)

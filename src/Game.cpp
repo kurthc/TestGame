@@ -11,12 +11,16 @@ void GameStateInitialize(game_state *GameState, game_offscreen_buffer *Buffer)
 	Buffer->MapRegionInUse.Width = (float)Buffer->MapRegionTotal.Height / GameState->GameMap->Height * GameState->GameMap->Width;
 	
 	// Create the initial snake.
+
 	intvec2 LastSegmentLocation = { 0,0 };
-	for (int i = 0; i < 19; i++)
+	for (int i = 0; i < 9; i++)
 	{
 		snake_segment *ss = new snake_segment();
-		ss->Location.SetXY(6, 25-i);
-		ss->Color = HMRGB(0, 255 - i * 13, 0);
+		ss->Location.SetXY(6, 15-i);
+		ss->Color = rand() % (256 * 256 * 256);
+		//ss->Color = HMRGB(255, 255, 0);
+		//GameState->Snake.Color;
+		//ss->Color = HMRGB(0, 255 - i * 13, 0);
 		if (i == 0)
 		{
 			ss->Direction = intUnitVectorY;
@@ -28,7 +32,7 @@ void GameStateInitialize(game_state *GameState, game_offscreen_buffer *Buffer)
 		LastSegmentLocation = ss->Location;
 		GameState->Snake.Segments.push_back(*ss);
 	}
-	GameState->Snake.Color = HMRGB(0, 255, 0);
+	GameState->Snake.Color = HMRGB(255, 255, 0);
 	GameState->Snake.Speed = 2;
 	GameState->Snake.Timer = 0;
 
