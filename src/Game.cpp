@@ -1,5 +1,15 @@
 #include "Game.h"
 
+int RGB(float Red, float Green, float Blue)
+{
+	int iRed   = (int)(MAX(MIN(Red, 1), 0) * 255);
+	int iGreen = (int)(MAX(MIN(Green, 1), 0) * 255);
+	int iBlue  = (int)(MAX(MIN(Blue, 1), 0) * 255);
+
+	int Output = (int)iBlue * 255 + (iGreen << 8) + (iRed << 16);
+	return Output;
+}
+
 void GameStateInitialize(game_state *GameState, game_offscreen_buffer *Buffer)
 {
 
@@ -11,13 +21,13 @@ void GameStateInitialize(game_state *GameState, game_offscreen_buffer *Buffer)
 	Buffer->MapRegionInUse.Width = (float)Buffer->MapRegionTotal.Height / GameState->GameMap->Height * GameState->GameMap->Width;
 	
 	// Create the initial snake.
-
-	intvec2 LastSegmentLocation = { 0,0 };
+	intvec2 LastSegmentLocation = { 0, 0 };
 	for (int i = 0; i < 9; i++)
 	{
 		snake_segment *ss = new snake_segment();
 		ss->Location.SetXY(6, 15-i);
-		ss->Color = rand() % (256 * 256 * 256);
+		//ss->Color = rand() % (256 * 256 * 256);
+		ss->Color = RGB(0, .5 + .05*i, .1);
 		//ss->Color = HMRGB(255, 255, 0);
 		//GameState->Snake.Color;
 		//ss->Color = HMRGB(0, 255 - i * 13, 0);
@@ -103,7 +113,7 @@ void ProcessInput(game_state *GameState, keys_down *KeysDown)
 	}
 	if (KeysDown->Space)
 	{
-		GameState->Snake.AddSegments(1);
+		//GameState->Snake.AddSegments(1);
 	}
 }
 
