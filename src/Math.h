@@ -22,6 +22,7 @@ public:
 	intvec2(int, int);
 
 	void SetXY(int X, int Y);
+	operator vec2();
 };
 
 

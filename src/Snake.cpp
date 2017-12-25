@@ -22,25 +22,7 @@ snake::snake(int Length, intvec2 InitialPosition, intvec2 InitialDirection)
 		this->Segments.push_back(*ss);
 	}
 
-	//for (int i = 0; i < Length; i++)
-	//{
-	//	snake_segment *ss = new snake_segment();
-	//	ss->Location.SetXY(6, 15 - i);
-	//	//ss->Color = RGB(0, .5 + .05*i, .1);
-	//	ss->Color = this->GetColor(i);
-
-	//	if (i == 0)
-	//	{
-	//		ss->Direction = intUnitVectorY;
-	//	}
-	//	else
-	//	{
-	//		ss->Direction = LastSegmentLocation - ss->Location;
-	//	}
-	//	LastSegmentLocation = ss->Location;
-	//	this->Segments.push_back(*ss);
-	//}
-	this->Speed = 2;
+	this->Speed = 1.5;
 	this->Timer = 0;
 }
 
@@ -52,8 +34,11 @@ void snake::SetDirection(int x, int y)
 
 int snake::GetColor(int SegmentNumber)
 {
-	// Color the snake with a sinusoidal green pattern from 1/2 to 1.
-	float GreenComponent = .75 + .25 * sin((double)SegmentNumber * 2 * 3.14159265358979 / 12.0f);
+	// Color the snake with a sinusoidal green pattern from MinColor to MaxColor
+	constexpr float MaxColor = 1.0f;
+	constexpr float MinColor = 0.4f;
+
+	float GreenComponent = (MaxColor + MinColor) / 2.0 + (MaxColor - MinColor) / 2.0 * sin((double)SegmentNumber * 2 * 3.14159265358979 / 12.0f);
 	int SegmentColor = RGB(0, GreenComponent, 0);
 	return SegmentColor;
 }

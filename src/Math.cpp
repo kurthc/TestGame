@@ -19,6 +19,12 @@ void vec2::SetXY(float x, float y)
 	this->Y = y;
 }
 
+//vec2::operator intvec2()
+//{
+//	intvec2 Output = intvec2((int)this->X, (int)this->Y);
+//	return Output;
+//}
+
 vec2 operator+(vec2 v1, vec2 v2)
 {
 	vec2 Result;
@@ -90,6 +96,12 @@ void intvec2::SetXY(int x, int y)
 {
 	this->X = x;
 	this->Y = y;
+}
+
+intvec2::operator vec2()
+{
+	vec2 Output = vec2((float)this->X, (float)this->Y);
+	return Output;
 }
 
 intvec2 operator+(intvec2 v1, intvec2 v2)
