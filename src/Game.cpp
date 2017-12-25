@@ -4,38 +4,18 @@
 
 void GameStateInitialize(game_state *GameState, game_offscreen_buffer *Buffer)
 {
-
+	// Create the game map.
 	GameState->GameMap = CreateBlankMap(30, 20);
-	GameState->Snake = new snake(9);
+	
+	// Create the snake
+	intvec2 InitialPosition = { 2,2 };
+	intvec2 InitialDirection = { 1,0 };
+	GameState->Snake = new snake(2, InitialPosition, InitialDirection);
 
 	Buffer->MapRegionInUse.x = Buffer->MapRegionTotal.x;
 	Buffer->MapRegionInUse.y = Buffer->MapRegionTotal.y;
 	Buffer->MapRegionInUse.Height = Buffer->MapRegionTotal.Height;
 	Buffer->MapRegionInUse.Width = (float)Buffer->MapRegionTotal.Height / GameState->GameMap->Height * GameState->GameMap->Width;
-	
-
-	//// Create the initial snake.
-	//intvec2 LastSegmentLocation = { 0, 0 };
-	//for (int i = 0; i < 9; i++)
-	//{
-	//	snake_segment *ss = new snake_segment();
-	//	ss->Location.SetXY(6, 15-i);
-	//	ss->Color = RGB(0, .5 + .05*i, .1);
-
-	//	if (i == 0)
-	//	{
-	//		ss->Direction = intUnitVectorY;
-	//	}
-	//	else
-	//	{
-	//		ss->Direction = LastSegmentLocation - ss->Location;
-	//	}
-	//	LastSegmentLocation = ss->Location;
-	//	GameState->Snake.Segments.push_back(*ss);
-	//}
-	//GameState->Snake.Color = HMRGB(255, 255, 0);
-	//GameState->Snake.Speed = 2;
-	//GameState->Snake.Timer = 0;
 
 	GameState->NewPelletTimer = 3;
 
@@ -56,15 +36,12 @@ game_map *CreateBlankMap(int Width, int Height)
 
 void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen_buffer *GameBuffer)
 {
-	//win32_offscreen_buffer Buffer = GlobalBackBuffer;
-	//hero Hero = GameState->Hero;
 	ProcessInput(GameState, KeysDown);
 
 	ProcessTimers(GameState);
 	ProcessSnake(GameState->Snake);
 
 	snake_segment *SnakeHead = &(GameState->Snake->Segments.front());
-	//pellet *PelletToDelete = 0;
 
 	std::list<pellet>::iterator it = GameState->Pellets.begin();
 	while (it != GameState->Pellets.end())
@@ -86,25 +63,41 @@ void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen
 
 void ProcessInput(game_state *GameState, keys_down *KeysDown)
 {
+	vec2 NewDirection;
+	bool DirectionChanged = false;
+
 	if (KeysDown->Left)
 	{
-		GameState->Snake->SetDirection(-UnitVectorX);
+		NewDirection = -UnitVectorX;
+		DirectionChanged = true;
+		//GameState->Snake->SetDirection(-UnitVectorX);
 	}
 	if (KeysDown->Right)
 	{
-		GameState->Snake->SetDirection(UnitVectorX);
+		NewDirection = UnitVectorX;
+		DirectionChanged = true;
+		//GameState->Snake->SetDirection(UnitVectorX);
 	}
 	if (KeysDown->Up)
 	{
-		GameState->Snake->SetDirection(-UnitVectorY);
+		NewDirection = -UnitVectorY;
+		DirectionChanged = true;
+		//GameState->Snake->SetDirection(-UnitVectorY);
 	}
 	if (KeysDown->Down)
 	{
-		GameState->Snake->SetDirection(UnitVectorY);
+		NewDirection = UnitVectorY;
+		DirectionChanged = true;
+		//GameState->Snake->SetDirection(UnitVectorY);
 	}
 	if (KeysDown->Space)
 	{
 		//GameState->Snake.AddSegments(1);
+	}
+
+	if (DirectionChanged)
+	{
+		GameState->Snake->SetDirection(NewDirection);
 	}
 }
 

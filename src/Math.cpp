@@ -143,3 +143,4 @@ intvec2 operator*(intvec2 v, int a)
 	Result.Y = a*v.Y;
 	return Result;
 }
+

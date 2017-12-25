@@ -1,18 +1,18 @@
 #include "Snake.h"
 
-snake::snake(int Length)
+snake::snake(int Length, intvec2 InitialPosition, intvec2 InitialDirection)
 {
 	// Create the initial snake.
 	intvec2 LastSegmentLocation = { 0, 0 };
 	for (int i = 0; i < Length; i++)
 	{
 		snake_segment *ss = new snake_segment();
-		ss->Location.SetXY(6, 15 - i);
-		ss->Color = RGB(0, .5 + .05*i, .1);
+		ss->Location = InitialPosition;
+		ss->Color = this->GetColor(i);
 
 		if (i == 0)
 		{
-			ss->Direction = intUnitVectorY;
+			ss->Direction = InitialDirection;
 		}
 		else
 		{
@@ -21,16 +21,41 @@ snake::snake(int Length)
 		LastSegmentLocation = ss->Location;
 		this->Segments.push_back(*ss);
 	}
-	this->Color = HMRGB(255, 255, 0);
+
+	//for (int i = 0; i < Length; i++)
+	//{
+	//	snake_segment *ss = new snake_segment();
+	//	ss->Location.SetXY(6, 15 - i);
+	//	//ss->Color = RGB(0, .5 + .05*i, .1);
+	//	ss->Color = this->GetColor(i);
+
+	//	if (i == 0)
+	//	{
+	//		ss->Direction = intUnitVectorY;
+	//	}
+	//	else
+	//	{
+	//		ss->Direction = LastSegmentLocation - ss->Location;
+	//	}
+	//	LastSegmentLocation = ss->Location;
+	//	this->Segments.push_back(*ss);
+	//}
 	this->Speed = 2;
 	this->Timer = 0;
 }
 
 void snake::SetDirection(int x, int y)
 {
-	//this->Direction.SetXY(x, y);
+	
 	this->Segments.front().Direction.SetXY(x, y);
+}
 
+int snake::GetColor(int SegmentNumber)
+{
+	// Color the snake with a sinusoidal green pattern from 1/2 to 1.
+	float GreenComponent = .75 + .25 * sin((double)SegmentNumber * 2 * 3.14159265358979 / 12.0f);
+	int SegmentColor = RGB(0, GreenComponent, 0);
+	return SegmentColor;
 }
 
 void snake::SetDirection(vec2 Direction)
@@ -40,7 +65,6 @@ void snake::SetDirection(vec2 Direction)
 
 void ProcessSnake(snake *Snake)
 {
-	//snake *Snake = &(GameState->Snake);
 	std::list<snake_segment> *Segments = &(Snake->Segments);
 
 	// The timer counts up to 1. When it gets there, move the snake.
@@ -64,14 +88,14 @@ void ProcessSnake(snake *Snake)
 
 void snake::AddSegments(int NewSegmentCount)
 {
+	int ExistingSegmentCount = this->Segments.size();
 	for (int i = 0; i < NewSegmentCount; i++)
 	{
-		// Add new segments at the location of the last segment moving toward the last esgment (i.e. not moving)
+		// Add new segments at the location of the last segment moving toward the last segment (i.e. not moving)
 		snake_segment *NewSegment = new snake_segment();
 		NewSegment->Location = this->Segments.back().Location;
 		NewSegment->Direction.SetXY(0, 0);
-		//NewSegment->Color = HMRGB(0, 255, 0);
-		NewSegment->Color = (rand() % 256) * 256 * 256 + (rand() % 256) * 256 + (rand() % 256);
+		NewSegment->Color = this->GetColor(ExistingSegmentCount + i);
 		this->Segments.push_back(*NewSegment);
 	}
 }
