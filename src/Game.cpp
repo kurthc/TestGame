@@ -1,50 +1,41 @@
 #include "Game.h"
 
-int RGB(float Red, float Green, float Blue)
-{
-	int iRed   = (int)(MAX(MIN(Red, 1), 0) * 255);
-	int iGreen = (int)(MAX(MIN(Green, 1), 0) * 255);
-	int iBlue  = (int)(MAX(MIN(Blue, 1), 0) * 255);
 
-	int Output = (int)iBlue * 255 + (iGreen << 8) + (iRed << 16);
-	return Output;
-}
 
 void GameStateInitialize(game_state *GameState, game_offscreen_buffer *Buffer)
 {
 
 	GameState->GameMap = CreateBlankMap(30, 20);
+	GameState->Snake = new snake(9);
 
 	Buffer->MapRegionInUse.x = Buffer->MapRegionTotal.x;
 	Buffer->MapRegionInUse.y = Buffer->MapRegionTotal.y;
 	Buffer->MapRegionInUse.Height = Buffer->MapRegionTotal.Height;
 	Buffer->MapRegionInUse.Width = (float)Buffer->MapRegionTotal.Height / GameState->GameMap->Height * GameState->GameMap->Width;
 	
-	// Create the initial snake.
-	intvec2 LastSegmentLocation = { 0, 0 };
-	for (int i = 0; i < 9; i++)
-	{
-		snake_segment *ss = new snake_segment();
-		ss->Location.SetXY(6, 15-i);
-		//ss->Color = rand() % (256 * 256 * 256);
-		ss->Color = RGB(0, .5 + .05*i, .1);
-		//ss->Color = HMRGB(255, 255, 0);
-		//GameState->Snake.Color;
-		//ss->Color = HMRGB(0, 255 - i * 13, 0);
-		if (i == 0)
-		{
-			ss->Direction = intUnitVectorY;
-		}
-		else
-		{
-			ss->Direction = LastSegmentLocation - ss->Location;
-		}
-		LastSegmentLocation = ss->Location;
-		GameState->Snake.Segments.push_back(*ss);
-	}
-	GameState->Snake.Color = HMRGB(255, 255, 0);
-	GameState->Snake.Speed = 2;
-	GameState->Snake.Timer = 0;
+
+	//// Create the initial snake.
+	//intvec2 LastSegmentLocation = { 0, 0 };
+	//for (int i = 0; i < 9; i++)
+	//{
+	//	snake_segment *ss = new snake_segment();
+	//	ss->Location.SetXY(6, 15-i);
+	//	ss->Color = RGB(0, .5 + .05*i, .1);
+
+	//	if (i == 0)
+	//	{
+	//		ss->Direction = intUnitVectorY;
+	//	}
+	//	else
+	//	{
+	//		ss->Direction = LastSegmentLocation - ss->Location;
+	//	}
+	//	LastSegmentLocation = ss->Location;
+	//	GameState->Snake.Segments.push_back(*ss);
+	//}
+	//GameState->Snake.Color = HMRGB(255, 255, 0);
+	//GameState->Snake.Speed = 2;
+	//GameState->Snake.Timer = 0;
 
 	GameState->NewPelletTimer = 3;
 
@@ -70,9 +61,9 @@ void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen
 	ProcessInput(GameState, KeysDown);
 
 	ProcessTimers(GameState);
-	ProcessSnake(&(GameState->Snake));
+	ProcessSnake(GameState->Snake);
 
-	snake_segment *SnakeHead = &(GameState->Snake.Segments.front());
+	snake_segment *SnakeHead = &(GameState->Snake->Segments.front());
 	//pellet *PelletToDelete = 0;
 
 	std::list<pellet>::iterator it = GameState->Pellets.begin();
@@ -83,7 +74,7 @@ void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen
 			// Snake head is on a pellet. Clear the pellet. (This works because the parameters are
 			// evaluated before the function call.)
 			GameState->Pellets.erase(it++);
-			GameState->Snake.AddSegments(3);
+			GameState->Snake->AddSegments(3);
 		}
 		else
 		{
@@ -97,19 +88,19 @@ void ProcessInput(game_state *GameState, keys_down *KeysDown)
 {
 	if (KeysDown->Left)
 	{
-		GameState->Snake.SetDirection(-UnitVectorX);
+		GameState->Snake->SetDirection(-UnitVectorX);
 	}
 	if (KeysDown->Right)
 	{
-		GameState->Snake.SetDirection(UnitVectorX);
+		GameState->Snake->SetDirection(UnitVectorX);
 	}
 	if (KeysDown->Up)
 	{
-		GameState->Snake.SetDirection(-UnitVectorY);
+		GameState->Snake->SetDirection(-UnitVectorY);
 	}
 	if (KeysDown->Down)
 	{
-		GameState->Snake.SetDirection(UnitVectorY);
+		GameState->Snake->SetDirection(UnitVectorY);
 	}
 	if (KeysDown->Space)
 	{
@@ -181,8 +172,7 @@ void DrawBorder(game_state *GameState, game_offscreen_buffer *Buffer)
 
 void DrawSnake(game_state *GameState, game_offscreen_buffer *Buffer)
 {
-//	//snake *Snake = GameState
-	std::list<snake_segment> Segments = GameState->Snake.Segments;
+	std::list<snake_segment> Segments = GameState->Snake->Segments;
 
 	for (std::list<snake_segment>::iterator it = Segments.begin(); it != Segments.end(); it++)
 	{

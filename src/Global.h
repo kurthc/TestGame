@@ -17,7 +17,6 @@ typedef uint32_t uint32;
 typedef uint64_t uint64;
 
 #define HMRGB(R, G, B) B + (G << 8) + (R << 16)
-//#define MAX(x,y) = (x > y) ? x : y
 #define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 
@@ -54,3 +53,6 @@ struct keys_down
 	int Down;
 	int Space;
 };
+
+
+int RGB(float Red, float Green, float Blue);

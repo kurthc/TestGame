@@ -22,10 +22,10 @@ public:
 	int Color;
 	float Timer;
 
+	snake(int Length);
 	void snake::SetDirection(int x, int y);
 	void snake::SetDirection(vec2 Direction);
 	void snake::AddSegments(int NewSegmentCount);
 };
 
 void ProcessSnake(snake *Snake);
-void AddSegments(snake *Snake, int NewSegmentCount);

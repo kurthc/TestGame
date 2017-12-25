@@ -1,5 +1,31 @@
 #include "Snake.h"
 
+snake::snake(int Length)
+{
+	// Create the initial snake.
+	intvec2 LastSegmentLocation = { 0, 0 };
+	for (int i = 0; i < Length; i++)
+	{
+		snake_segment *ss = new snake_segment();
+		ss->Location.SetXY(6, 15 - i);
+		ss->Color = RGB(0, .5 + .05*i, .1);
+
+		if (i == 0)
+		{
+			ss->Direction = intUnitVectorY;
+		}
+		else
+		{
+			ss->Direction = LastSegmentLocation - ss->Location;
+		}
+		LastSegmentLocation = ss->Location;
+		this->Segments.push_back(*ss);
+	}
+	this->Color = HMRGB(255, 255, 0);
+	this->Speed = 2;
+	this->Timer = 0;
+}
+
 void snake::SetDirection(int x, int y)
 {
 	//this->Direction.SetXY(x, y);

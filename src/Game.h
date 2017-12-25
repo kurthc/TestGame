@@ -37,7 +37,7 @@ class game_state
 {
 public:
 	//hero Hero;
-	snake Snake;
+	snake *Snake;
 	std::list<pellet> Pellets;
 	float NewPelletTimer;
 
@@ -50,7 +50,6 @@ public:
 game_map *CreateBlankMap(int Width, int Height);
 void GameStateInitialize(game_state *GameState, game_offscreen_buffer *Buffer);
 void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen_buffer *Buffer);
-//void SetCheckerboardMap(game_map *GameMap);
 void ProcessInput(game_state *GameState, keys_down *KeysDown);
 void ProcessTimers(game_state *GameState);
 void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer);
