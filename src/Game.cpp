@@ -118,6 +118,21 @@ vec2 MapToDisplayCoordinates(float x, float y, game_state *GameState, game_offsc
 	return vec2(NewX, NewY);
 }
 
+//rectangle MapToDisplayRectangle(rectangle r, game_state *GameState, game_offscreen_buffer *Buffer)
+//{
+//	
+//}
+
+rectangle MapToDisplayRectangle(float x, float y, float Width, float Height, game_state *GameState, game_offscreen_buffer *Buffer)
+{
+	float Right = x + Width;
+	float Bottom = y + Height;
+	vec2 NewV1 = MapToDisplayCoordinates(x, y, GameState, Buffer);
+	vec2 NewV2 = MapToDisplayCoordinates(Right, Bottom, GameState, Buffer);
+	rectangle output = { NewV1.X, NewV1.Y, NewV2.X-NewV1.X, NewV2.Y - NewV1.Y };
+	return output;
+}
+
 intrectangle ConvertMapTileToDisplayRectangle(intrectangle r, int MaxX, int MaxY, int x, int y)
 {
 	return ConvertMapTileToDisplayRectangle(r.x, r.y, r.Width, r.Height, MaxX, MaxY, x, y);
@@ -178,10 +193,12 @@ void DrawSnake(game_state *GameState, game_offscreen_buffer *Buffer)
 
 	for (std::list<snake_segment>::iterator it = Segments.begin(); it != Segments.end(); it++)
 	{
-		//vec2 DrawLocation = it->Location + it->Direction * Snake->Timer;
-		vec2 DrawLocation = it->Location;
-		intrectangle Rec = ConvertMapTileToDisplayRectangle(Buffer->MapRegionInUse, GameMap->Width, GameMap->Height, DrawLocation.X, DrawLocation.Y);
-		DrawRectangle(Buffer, Rec, it->Color);
+		vec2 DrawLocation = it->Location + it->Direction * Snake->Timer;
+		//vec2 DrawLocation = it->Location;
+		//intrectangle Rec = ConvertMapTileToDisplayRectangle(Buffer->MapRegionInUse, GameMap->Width, GameMap->Height, DrawLocation.X, DrawLocation.Y);
+		//DrawRectangle(Buffer, Rec, it->Color);
+		rectangle Rec = MapToDisplayRectangle(DrawLocation.X, DrawLocation.Y, 1, 1, GameState, Buffer);
+		DrawRectangle(Buffer, Rec.x, Rec.y, Rec.Width, Rec.Height, it->Color);
 
 	}
 }
