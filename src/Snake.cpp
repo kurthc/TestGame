@@ -1,9 +1,9 @@
 #include "Snake.h"
 
-snake::snake(int Length, intvec2 InitialPosition, intvec2 InitialDirection)
+snake::snake(int Length, vec2 InitialPosition, vec2 InitialDirection)
 {
 	// Create the initial snake.
-	intvec2 LastSegmentLocation = { 0, 0 };
+	vec2 LastSegmentLocation = { 0, 0 };
 	for (int i = 0; i < Length; i++)
 	{
 		snake_segment *ss = new snake_segment();
@@ -56,7 +56,7 @@ void ProcessSnake(snake *Snake)
 	Snake->Timer += Snake->Speed / 30;   // FPS?
 	if (Snake->Timer >= 1)
 	{
-		intvec2 LastLocation = { 0, 0 };
+		vec2 LastLocation = { 0, 0 };
 		for (std::list<snake_segment>::iterator it = Segments->begin(); it != Segments->end(); it++)
 		{
 			it->Location = it->Location + it->Direction;

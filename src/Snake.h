@@ -9,8 +9,8 @@
 class snake_segment
 {
 public:
-	intvec2 Location;
-	intvec2 Direction;
+	vec2 Location;
+	vec2 Direction;
 	int Color;
 	//bool IsExploding;
 };
@@ -20,9 +20,9 @@ class snake
 public:
 	std::list<snake_segment> Segments;
 	float Speed;
-	float Timer;
+	float Timer;      // The timer counts up to 1. When it gets there, move the snake.
 
-	snake(int Length, intvec2 InitialPosition, intvec2 InitialDirection);
+	snake(int Length, vec2 InitialPosition, vec2 InitialDirection);
 	void snake::SetDirection(int x, int y);
 	void snake::SetDirection(vec2 Direction);
 	void snake::AddSegments(int NewSegmentCount);

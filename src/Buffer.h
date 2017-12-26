@@ -22,4 +22,5 @@ public:
 
 void ClearBuffer(game_offscreen_buffer *Buffer);
 void DrawRectangle(game_offscreen_buffer *Buffer, int X, int Y, int Width, int Height, int32_t Color);
+void DrawRectangle(game_offscreen_buffer *Buffer, float Left, float Top, float Width, float Height, int32_t Color);
 void DrawRectangle(game_offscreen_buffer *Buffer, intrectangle Rect, int32_t Color);

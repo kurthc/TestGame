@@ -21,7 +21,7 @@
 class pellet
 {
 public:
-	intvec2 Location;
+	vec2 Location;
 	int Color;
 };
 

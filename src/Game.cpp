@@ -8,8 +8,8 @@ void GameStateInitialize(game_state *GameState, game_offscreen_buffer *Buffer)
 	GameState->GameMap = CreateBlankMap(30, 20);
 	
 	// Create the snake
-	intvec2 InitialPosition = { 2,2 };
-	intvec2 InitialDirection = { 1,0 };
+	vec2 InitialPosition = { 2,2 };
+	vec2 InitialDirection = { 1,0 };
 	GameState->Snake = new snake(2, InitialPosition, InitialDirection);
 
 	Buffer->MapRegionInUse.x = Buffer->MapRegionTotal.x;
@@ -111,6 +111,13 @@ void ProcessTimers(game_state *GameState)
 	}
 }
 
+vec2 MapToDisplayCoordinates(float x, float y, game_state *GameState, game_offscreen_buffer *Buffer)
+{
+	float NewX = x / GameState->GameMap->Width * Buffer->MapRegionInUse.Width + Buffer->MapRegionInUse.x;
+	float NewY = y / GameState->GameMap->Height * Buffer->MapRegionInUse.Height + Buffer->MapRegionInUse.y;
+	return vec2(NewX, NewY);
+}
+
 intrectangle ConvertMapTileToDisplayRectangle(intrectangle r, int MaxX, int MaxY, int x, int y)
 {
 	return ConvertMapTileToDisplayRectangle(r.x, r.y, r.Width, r.Height, MaxX, MaxY, x, y);
@@ -142,7 +149,7 @@ void DrawMap(game_state *GameState, game_offscreen_buffer *Buffer)
 		for (int x = 0; x < GameMap->Width; x++)
 		{
 			intrectangle Tile = ConvertMapTileToDisplayRectangle(Buffer->MapRegionInUse, GameMap->Width, GameMap->Height, x, y);
-			DrawRectangle(Buffer, Tile.x, Tile.y, 2, 2, HMRGB(127, 127, 127));
+			DrawRectangle(Buffer, Tile.x, Tile.y, 2, 2, RGB(.5, .5, .5));
 		}
 	}
 }
@@ -160,21 +167,37 @@ void DrawBorder(game_state *GameState, game_offscreen_buffer *Buffer)
 	Outer.Height = Inner.Height + 2 * BorderWidth;
 
 	DrawRectangle(Buffer, Outer, Color);
-	DrawRectangle(Buffer, Inner, HMRGB(0, 0, 0));
+	DrawRectangle(Buffer, Inner, RGB(0.0, 0.0, 0.0));
 }
 
 void DrawSnake(game_state *GameState, game_offscreen_buffer *Buffer)
 {
-	std::list<snake_segment> Segments = GameState->Snake->Segments;
+	snake *Snake = GameState->Snake;
+	game_map *GameMap = GameState->GameMap;
+	std::list<snake_segment> Segments = Snake->Segments;
 
 	for (std::list<snake_segment>::iterator it = Segments.begin(); it != Segments.end(); it++)
 	{
-		intvec2 Location = it->Location;
-		intrectangle Rec = ConvertMapTileToDisplayRectangle(Buffer->MapRegionInUse, GameState->GameMap->Width, GameState->GameMap->Height, Location.X, Location.Y);
+		//vec2 DrawLocation = it->Location + it->Direction * Snake->Timer;
+		vec2 DrawLocation = it->Location;
+		intrectangle Rec = ConvertMapTileToDisplayRectangle(Buffer->MapRegionInUse, GameMap->Width, GameMap->Height, DrawLocation.X, DrawLocation.Y);
 		DrawRectangle(Buffer, Rec, it->Color);
-		
+
 	}
 }
+
+//void DrawSnake(game_state *GameState, game_offscreen_buffer *Buffer)
+//{
+//	std::list<snake_segment> Segments = GameState->Snake->Segments;
+//
+//	for (std::list<snake_segment>::iterator it = Segments.begin(); it != Segments.end(); it++)
+//	{
+//		vec2 Location = it->Location;
+//		intrectangle Rec = ConvertMapTileToDisplayRectangle(Buffer->MapRegionInUse, GameState->GameMap->Width, GameState->GameMap->Height, Location.X, Location.Y);
+//		DrawRectangle(Buffer, Rec, it->Color);
+//		
+//	}
+//}
 
 void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer)
 {
@@ -202,7 +225,7 @@ void AddPellet(game_state *GameState)
 	int y = (rand() % GameState->GameMap->Height);
 	pellet *Pellet = new pellet();
 	Pellet->Location.SetXY(x, y);
-	Pellet->Color = HMRGB(255, 255, 255);
+	Pellet->Color = RGB(1.0, 1.0, 1.0);
 	GameState->Pellets.push_back(*Pellet);
 }
 

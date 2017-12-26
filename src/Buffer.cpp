@@ -5,7 +5,7 @@ game_offscreen_buffer::game_offscreen_buffer(int TotalWidth, int TotalHeight)
 	this->TotalWidth = TotalWidth;
 	this->TotalHeight = TotalHeight;
 	this->MapBorderThickness = 5;
-	this->MapBorderColor = HMRGB(255, 0, 255);
+	this->MapBorderColor = RGB(1.0, 0.0, 1.0);
 	this->MapRegionTotal.x = 50;
 	this->MapRegionTotal.y = 50;
 	this->MapRegionTotal.Width = TotalWidth - 100;
@@ -35,8 +35,18 @@ void DrawRectangle(game_offscreen_buffer *Buffer, int Left, int Top, int Width, 
 	}
 }
 
+void DrawRectangle(game_offscreen_buffer *Buffer, float Left, float Top, float Width, float Height, int32_t Color)
+{
+	DrawRectangle(Buffer, (int)Left, (int)Top, (int)Width, (int)Height, Color);
+}
+
 void DrawRectangle(game_offscreen_buffer *Buffer, intrectangle Rect, int32_t Color)
 {
 	DrawRectangle(Buffer, Rect.x, Rect.y, Rect.Width, Rect.Height, Color);
 }
+
+//void DrawRectangle(game_offscreen_buffer *Buffer, intrectangle Rect, int32_t Color)
+//{
+//	DrawRectangle(Buffer, Rect.x, Rect.y, Rect.Width, Rect.Height, Color);
+//}
 
