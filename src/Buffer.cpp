@@ -45,8 +45,18 @@ void DrawRectangle(game_offscreen_buffer *Buffer, intrectangle Rect, int32_t Col
 	DrawRectangle(Buffer, Rect.x, Rect.y, Rect.Width, Rect.Height, Color);
 }
 
-//void DrawRectangle(game_offscreen_buffer *Buffer, intrectangle Rect, int32_t Color)
-//{
-//	DrawRectangle(Buffer, Rect.x, Rect.y, Rect.Width, Rect.Height, Color);
-//}
+void DrawCircle(game_offscreen_buffer *Buffer, int Left, int Top, int Width, int Height, int32_t Color)
+{
+	float CenterX = (float)Left + Width / 2.0;
+	float CenterY = (float)Top + Height / 2.0;
 
+	int32_t* Pixel = (int32_t*)Buffer->Memory;
+
+	for (int y = MAX(Top, 0); y < Top + Height && y < Buffer->TotalHeight; y++)
+	{
+		for (int x = MAX(Left, 0); x < Left + Width && x < Buffer->TotalWidth; x++)
+		{
+			Pixel[y*Buffer->TotalWidth + x] = Color;
+		}
+	}
+}

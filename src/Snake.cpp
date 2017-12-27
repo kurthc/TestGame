@@ -3,6 +3,8 @@
 snake::snake(int Length, vec2 InitialPosition, vec2 InitialDirection)
 {
 	// Create the initial snake.
+	this->Direction = InitialDirection;
+
 	vec2 LastSegmentLocation = { 0, 0 };
 	for (int i = 0; i < Length; i++)
 	{
@@ -29,18 +31,9 @@ snake::snake(int Length, vec2 InitialPosition, vec2 InitialDirection)
 void snake::SetDirection(int x, int y)
 {
 	
-	this->Segments.front().Direction.SetXY(x, y);
-}
-
-int snake::GetColor(int SegmentNumber)
-{
-	// Color the snake with a sinusoidal green pattern from MinColor to MaxColor
-	constexpr float MaxColor = 1.0f;
-	constexpr float MinColor = 0.4f;
-
-	float GreenComponent = (MaxColor + MinColor) / 2.0 + (MaxColor - MinColor) / 2.0 * sin((double)SegmentNumber * 2 * 3.14159265358979 / 12.0f);
-	int SegmentColor = RGB(0, GreenComponent, 0);
-	return SegmentColor;
+	//this->Segments.front().Direction.SetXY(x, y);
+	vec2 Direction = vec2((float)x, (float)y);
+	this->Direction = Direction;
 }
 
 void snake::SetDirection(vec2 Direction)
@@ -60,7 +53,11 @@ void ProcessSnake(snake *Snake)
 		for (std::list<snake_segment>::iterator it = Segments->begin(); it != Segments->end(); it++)
 		{
 			it->Location = it->Location + it->Direction;
-			if (it != Segments->begin())
+			if (it == Segments->begin())
+			{
+				it->Direction = Snake->Direction;
+			}
+			else
 			{
 				it->Direction = LastLocation - it->Location;
 			}
@@ -83,4 +80,15 @@ void snake::AddSegments(int NewSegmentCount)
 		NewSegment->Color = this->GetColor(ExistingSegmentCount + i);
 		this->Segments.push_back(*NewSegment);
 	}
+}
+
+int snake::GetColor(int SegmentNumber)
+{
+	// Color the snake with a sinusoidal green pattern from MinColor to MaxColor
+	constexpr float MaxColor = 1.0f;
+	constexpr float MinColor = 0.4f;
+
+	float GreenComponent = (MaxColor + MinColor) / 2.0 + (MaxColor - MinColor) / 2.0 * sin((double)SegmentNumber * 2 * 3.14159265358979 / 12.0f);
+	int SegmentColor = RGB(0, GreenComponent, 0);
+	return SegmentColor;
 }
