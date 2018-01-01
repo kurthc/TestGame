@@ -53,6 +53,6 @@ void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen
 void ProcessInput(game_state *GameState, keys_down *KeysDown);
 void ProcessTimers(game_state *GameState);
 void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer);
-intrectangle ConvertMapTileToDisplayRectangle(intrectangle r, int MaxX, int MaxY, int x, int y);
-intrectangle ConvertMapTileToDisplayRectangle(int Left, int Top, int Width, int Height, int MaxX, int MaxY, int x, int y);
+//intrectangle ConvertMapTileToDisplayRectangle(intrectangle r, int MaxX, int MaxY, int x, int y);
+//intrectangle ConvertMapTileToDisplayRectangle(int Left, int Top, int Width, int Height, int MaxX, int MaxY, int x, int y);
 void AddPellet(game_state *GameState);

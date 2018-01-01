@@ -111,12 +111,24 @@ void ProcessTimers(game_state *GameState)
 	}
 }
 
+
+//Map Coordinates go from:      0 to GameState->GameMap->Width
+//                    and:      0 to GameState->GameMap->Height
+//Display Coordinates go from:  Buffer->MapRegionInUse.x to Buffer->MapRegionInUse.x + Buffer->MapRegionInUse.Width
+//                        and:  Buffer->MapRegionInUse.y to Buffer->MapRegionInUse.y + Buffer->MapRegionInUse.Height
+
+
 vec2 MapToDisplayCoordinates(float x, float y, game_state *GameState, game_offscreen_buffer *Buffer)
 {
 	float NewX = x / GameState->GameMap->Width * Buffer->MapRegionInUse.Width + Buffer->MapRegionInUse.x;
 	float NewY = y / GameState->GameMap->Height * Buffer->MapRegionInUse.Height + Buffer->MapRegionInUse.y;
 	return vec2(NewX, NewY);
 }
+
+//vec2 DisplayToMapCoordinates(float x, float y, game_state *GameState, game_offscreen_buffer *Buffer)
+//{
+//	//TODO: Write if needed.
+//}
 
 //rectangle MapToDisplayRectangle(rectangle r, game_state *GameState, game_offscreen_buffer *Buffer)
 //{
@@ -133,29 +145,6 @@ rectangle MapToDisplayRectangle(float x, float y, float Width, float Height, gam
 	return output;
 }
 
-intrectangle ConvertMapTileToDisplayRectangle(intrectangle r, int MaxX, int MaxY, int x, int y)
-{
-	return ConvertMapTileToDisplayRectangle(r.x, r.y, r.Width, r.Height, MaxX, MaxY, x, y);
-}
-
-intrectangle ConvertMapTileToDisplayRectangle(int DisplayRegionLeft, int DisplayRegionTop, int DisplayRegionWidth, int DisplayRegionHeight,
-	int MapMaxX, int MapMaxY, int MapX, int MapY)
-{
-	intrectangle Rect;
-
-	float Left = (float)MapX / MapMaxX * DisplayRegionWidth + DisplayRegionLeft;
-	float Right = (float)(MapX+1) / MapMaxX * DisplayRegionWidth + DisplayRegionLeft;
-	float Top = (float)MapY / MapMaxY * DisplayRegionHeight + DisplayRegionTop;
-	float Bottom = (float)(MapY+1) / MapMaxY * DisplayRegionHeight + DisplayRegionTop;
-
-	Rect.x = (int)Left;
-	Rect.y = (int)Top;
-	Rect.Width = (int)Right - (int)Left;
-	Rect.Height = (int)Bottom - (int)Top;
-
-	return Rect;
-}
-
 void DrawMap(game_state *GameState, game_offscreen_buffer *Buffer)
 {
 	game_map *GameMap = GameState->GameMap;
@@ -163,8 +152,8 @@ void DrawMap(game_state *GameState, game_offscreen_buffer *Buffer)
 	{
 		for (int x = 0; x < GameMap->Width; x++)
 		{
-			intrectangle Tile = ConvertMapTileToDisplayRectangle(Buffer->MapRegionInUse, GameMap->Width, GameMap->Height, x, y);
-			DrawRectangle(Buffer, Tile.x, Tile.y, 2, 2, RGB(.5, .5, .5));
+			vec2 UpperLeftCorner = MapToDisplayCoordinates(x, y, GameState, Buffer);
+			DrawRectangle(Buffer, UpperLeftCorner.X, UpperLeftCorner.Y, 2.0, 2.0, RGB(.5, .5, .5));
 		}
 	}
 }
@@ -191,30 +180,16 @@ void DrawSnake(game_state *GameState, game_offscreen_buffer *Buffer)
 	game_map *GameMap = GameState->GameMap;
 	std::list<snake_segment> Segments = Snake->Segments;
 
-	for (std::list<snake_segment>::iterator it = Segments.begin(); it != Segments.end(); it++)
+	// Iterate through the segmeents in reverse order
+	for (std::list<snake_segment>::reverse_iterator it = Segments.rbegin(); it != Segments.rend(); it++)
 	{
 		vec2 DrawLocation = it->Location + it->Direction * Snake->Timer;
-		//vec2 DrawLocation = it->Location;
-		//intrectangle Rec = ConvertMapTileToDisplayRectangle(Buffer->MapRegionInUse, GameMap->Width, GameMap->Height, DrawLocation.X, DrawLocation.Y);
-		//DrawRectangle(Buffer, Rec, it->Color);
+		
 		rectangle Rec = MapToDisplayRectangle(DrawLocation.X, DrawLocation.Y, 1, 1, GameState, Buffer);
 		DrawRectangle(Buffer, Rec.x, Rec.y, Rec.Width, Rec.Height, it->Color);
-
 	}
-}
 
-//void DrawSnake(game_state *GameState, game_offscreen_buffer *Buffer)
-//{
-//	std::list<snake_segment> Segments = GameState->Snake->Segments;
-//
-//	for (std::list<snake_segment>::iterator it = Segments.begin(); it != Segments.end(); it++)
-//	{
-//		vec2 Location = it->Location;
-//		intrectangle Rec = ConvertMapTileToDisplayRectangle(Buffer->MapRegionInUse, GameState->GameMap->Width, GameState->GameMap->Height, Location.X, Location.Y);
-//		DrawRectangle(Buffer, Rec, it->Color);
-//		
-//	}
-//}
+}
 
 void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer)
 {
@@ -222,17 +197,14 @@ void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer)
 	DrawBorder(GameState, Buffer);
 	DrawMap(GameState, Buffer);
 
-	//hero *Hero = &(GameState->Hero);
-	//DrawRectangle(Buffer, (int)Hero->Position.X, (int)Hero->Position.Y, Hero->Width, Hero->Height, Hero->Color);
-
+	// Draw the pellets.
 	for (std::list<pellet>::iterator it = GameState->Pellets.begin(); it != GameState->Pellets.end(); it++)
 	{
-		intrectangle Rec = ConvertMapTileToDisplayRectangle(Buffer->MapRegionInUse, GameState->GameMap->Width, GameState->GameMap->Height, it->Location.X, it->Location.Y);
-		DrawRectangle(Buffer, Rec, it->Color);
+		rectangle Rec = MapToDisplayRectangle(it->Location.X, it->Location.Y, 1.0, 1.0, GameState, Buffer);
+		DrawRectangle(Buffer, Rec.x, Rec.y, Rec.Width, Rec.Height, it->Color);
 	}
 
 	DrawSnake(GameState, Buffer);
-
 }
 
 
