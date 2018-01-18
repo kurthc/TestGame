@@ -148,17 +148,17 @@ static LRESULT CALLBACK Win32MainWindowCallback(HWND Window, UINT Message, WPARA
     return(Result);
 }
 
-void SendIntToDebug(int n)
-{
-	char MsgBuffer[256];
-	wsprintf(MsgBuffer, "%d\n", n);
-	OutputDebugStringA(MsgBuffer);
-}
-
-void SendStringToDebug(char *Message)
-{
-	OutputDebugStringA(Message);
-}
+//void SendIntToDebug(int n)
+//{
+//	char MsgBuffer[256];
+//	wsprintf(MsgBuffer, "%d\n", n);
+//	OutputDebugStringA(MsgBuffer);
+//}
+//
+//void SendStringToDebug(char *Message)
+//{
+//	OutputDebugStringA(Message);
+//}
 
 float GetSeconds()
 {
@@ -184,6 +184,14 @@ void Win32HandleMessages()
 	return;
 }
 
+static void Win32AddConsole()
+{
+	FILE *stream;
+	AllocConsole();
+	AttachConsole(GetCurrentProcessId());
+	freopen_s(&stream, "CON", "w", stdout);
+}
+
 int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLine, int ShowCode)
 {
 	// QueryPerformanceCounter() returns clock time in "counts". We can convert this to seconds with QueryPerformanceFrequency,
@@ -194,6 +202,9 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 	CountsPerSecond = (int)CountsPerSecondLarge.QuadPart;
 
 	//int CountsPerFrame = (int)CountsPerSecondLarge.QuadPart / TargetFPS;
+
+	// Attach a console window for debugging.
+	Win32AddConsole();
 
 	// Initialize the back buffer.
     Win32ResizeDIBSection(&GlobalBackBuffer, GameWindowWidth, GameWindowHeight);
@@ -211,7 +222,8 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
                 CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, Instance, 0);
         if(Window)
         {
-            // Since we specified CS_OWNDC, we can just get one device context and use it forever because we are not sharing it with anyone.
+			
+			// Since we specified CS_OWNDC, we can just get one device context and use it forever because we are not sharing it with anyone.
             HDC DeviceContext = GetDC(Window);
 
 			game_offscreen_buffer GameBuffer(GlobalBackBuffer.Width, GlobalBackBuffer.Height);
@@ -252,8 +264,8 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 
 				LastFrameStart = GetSeconds();
 				
-				// Write the number of frames to Output for now.
-				SendIntToDebug(FrameCount++);
+				// Output the number of frames if desired.
+				//std::cout << "Frame Count: " << FrameCount++ << std::endl;
 				
 			}  // ****************End of Game Loop
 			

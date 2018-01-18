@@ -1,10 +1,11 @@
 #pragma once
 
+#include <iostream>
+#include <list>
 #include "Global.h"
 #include "Math.h"
 #include "Buffer.h"
 #include "Snake.h"
-#include <list>
 
 
 //class hero

@@ -8,8 +8,8 @@ void GameStateInitialize(game_state *GameState, game_offscreen_buffer *Buffer)
 	GameState->GameMap = CreateBlankMap(30, 20);
 	
 	// Create the snake
-	vec2 InitialPosition = { 2,2 };
-	vec2 InitialDirection = { 1,0 };
+	vec2 InitialPosition = {2, 2};
+	vec2 InitialDirection = {1, 0};
 	GameState->Snake = new snake(2, InitialPosition, InitialDirection);
 
 	Buffer->MapRegionInUse.x = Buffer->MapRegionTotal.x;
@@ -52,6 +52,7 @@ void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen
 			// evaluated before the function call.)
 			GameState->Pellets.erase(it++);
 			GameState->Snake->AddSegments(3);
+			std::cout << "Ate a pellet!" << std::endl;
 		}
 		else
 		{
