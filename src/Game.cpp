@@ -26,10 +26,10 @@ game_map *CreateBlankMap(int Width, int Height)
 	game_map *GameMap = new game_map();
 	GameMap->Width = Width;
 	GameMap->Height = Height;
-	GameMap->Bytes = new uint8[Width * Height];
+	GameMap->Bytes = new uint8_t[Width * Height];
 	for (int i = 0; i < Width*Height; i++)
 	{
-		*((uint8 *)(GameMap->Bytes) + i) = 0;
+		*((uint8_t *)(GameMap->Bytes) + i) = 0;
 	}
 	return GameMap;
 }

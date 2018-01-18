@@ -26,6 +26,7 @@ void DrawRectangle(game_offscreen_buffer *Buffer, int Left, int Top, int Width, 
 {
 	int32_t* Pixel = (int32_t*)Buffer->Memory;
 
+	//for (int y = MAX(Top, 0); y < Top + Height && y < Buffer->TotalHeight; y++)
 	for (int y = MAX(Top, 0); y < Top + Height && y < Buffer->TotalHeight; y++)
 	{
 		for (int x = MAX(Left, 0); x < Left + Width && x < Buffer->TotalWidth; x++)

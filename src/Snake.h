@@ -24,7 +24,7 @@ public:
 	vec2 Direction;
 
 	snake(int Length, vec2 InitialPosition, vec2 InitialDirection);
-	void snake::SetDirection(int x, int y);		//TODO: Lose the ints?
+	void snake::SetDirection(float x, float y);		//TODO: Lose the ints?
 	void snake::SetDirection(vec2 Direction);
 	void snake::AddSegments(int NewSegmentCount);
 	int snake::GetColor(int SegmentNumber);

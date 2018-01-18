@@ -1,18 +1,8 @@
-/* ========================================================================
-   $File: $
-   $Date: $
-   $Revision: $
-   $Creator: Casey Muratori $
-   $Notice: (C) Copyright 2014 by Molly Rocket, Inc. All Rights Reserved. $
-   ======================================================================== */
-
-
 #include "Global.h"
 #include "win32_handmade.h"
 
 
-internal win32_window_dimension
-Win32GetWindowDimension(HWND Window)
+static win32_window_dimension Win32GetWindowDimension(HWND Window)
 {
     win32_window_dimension Result;
     
@@ -24,7 +14,7 @@ Win32GetWindowDimension(HWND Window)
     return(Result);
 }
 
-internal void
+static void
 Win32ResizeDIBSection(win32_offscreen_buffer *Buffer, int Width, int Height)
 {
 	// Initialize the buffer.
@@ -55,7 +45,7 @@ Win32ResizeDIBSection(win32_offscreen_buffer *Buffer, int Width, int Height)
     Buffer->Memory = VirtualAlloc(0, BitmapMemorySize, MEM_COMMIT, PAGE_READWRITE);
 }
 
-internal void Win32DisplayBufferInWindow(win32_offscreen_buffer *Buffer, HDC DeviceContext, int WindowWidth, int WindowHeight)
+static void Win32DisplayBufferInWindow(win32_offscreen_buffer *Buffer, HDC DeviceContext, int WindowWidth, int WindowHeight)
 {
     StretchDIBits(DeviceContext, 0, 0, Buffer->Width, Buffer->Height,
 			0, 0, Buffer->Width, Buffer->Height,
@@ -68,7 +58,7 @@ internal void Win32DisplayBufferInWindow(win32_offscreen_buffer *Buffer, HDC Dev
 	//DrawText(DeviceContext, Something, -1, &r, DT_LEFT);
 }
 
-internal LRESULT CALLBACK Win32MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LPARAM LParam)
+static LRESULT CALLBACK Win32MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LPARAM LParam)
 {       
     LRESULT Result = 0;
 
@@ -91,7 +81,7 @@ internal LRESULT CALLBACK Win32MainWindowCallback(HWND Window, UINT Message, WPA
 
 		case WM_KEYDOWN:
 		{
-			uint32 VKCode = WParam;
+			int VKCode = WParam;
 			if (VKCode == 'W')
 			{
 				KeysDown.Up = 1;
@@ -116,7 +106,7 @@ internal LRESULT CALLBACK Win32MainWindowCallback(HWND Window, UINT Message, WPA
 
 		case WM_KEYUP:
 		{
-			uint32 VKCode = WParam;
+			uint32_t VKCode = WParam;
 			if (VKCode == 'W')
 			{
 				KeysDown.Up = 0;

@@ -19,8 +19,8 @@ struct win32_window_dimension
 	int Height;
 };
 
-global_variable bool GlobalRunning;
-global_variable win32_offscreen_buffer GlobalBackBuffer;
-global_variable keys_down KeysDown;
+static bool GlobalRunning;
+static win32_offscreen_buffer GlobalBackBuffer;
+static keys_down KeysDown;
 
 void SendStringToDebug(char *Message);

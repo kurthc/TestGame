@@ -28,7 +28,7 @@ snake::snake(int Length, vec2 InitialPosition, vec2 InitialDirection)
 	this->Timer = 0;
 }
 
-void snake::SetDirection(int x, int y)
+void snake::SetDirection(float x, float y)
 {
 	
 	//this->Segments.front().Direction.SetXY(x, y);
@@ -88,7 +88,7 @@ int snake::GetColor(int SegmentNumber)
 	constexpr float MaxColor = 1.0f;
 	constexpr float MinColor = 0.4f;
 
-	float GreenComponent = (MaxColor + MinColor) / 2.0 + (MaxColor - MinColor) / 2.0 * sin((double)SegmentNumber * 2 * 3.14159265358979 / 12.0f);
+	float GreenComponent = (MaxColor + MinColor) / 2.0f + (MaxColor - MinColor) / 2.0f * (float)sin(SegmentNumber * 2.0 * 3.14159265358979 / 12.0f);
 	int SegmentColor = RGB(0, GreenComponent, 0);
 	return SegmentColor;
 }
