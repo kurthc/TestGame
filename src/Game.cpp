@@ -45,14 +45,9 @@ void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen
 	}
 	else
 	{
-
 		ProcessInput(GameState, KeysDown);
-
 		ProcessTimers(GameState);   // Currently just adds pellets
-
 		ProcessSnake(GameState, GameState->Snake);    // Move the snake, check for collisions.
-
-
 	}
 }
 
@@ -64,13 +59,19 @@ void ProcessSnake(game_state* GameState, snake *Snake)
 	std::list<snake_segment> *Segments = &(Snake->Segments);
 
 	// The timer counts up to 1. When it gets there, move the snake.
-	Snake->Timer += Snake->Speed / 30;   // FPS?
+	Snake->Timer += Snake->Speed / 30.0f;   // FPS?
 	if (Snake->Timer >= 1)
 	{
 		vec2 LastLocation = {0, 0};
 		for (std::list<snake_segment>::iterator it = Segments->begin(); it != Segments->end(); it++)
 		{
-			it->Location = it->Location + it->Direction;
+			it->Location = it->Location + it->Direction;    //TODO: Throw in a round-to-integer here.
+			if (it->IntangibleTimer > 0)
+			{
+				it->IntangibleTimer -= Snake->Speed / 30.0f;
+				if (it->IntangibleTimer < 0.0f)
+					it->IntangibleTimer = 0.0f;
+			}
 			if (it == Segments->begin())
 			{
 				it->Direction = Snake->Direction;
@@ -98,7 +99,7 @@ void ProcessSnake(game_state* GameState, snake *Snake)
 	//for (std::list<snake_segment>::iterator it = std::next(Segments->begin(), 2); it != Segments->end(); it++)
 	for (std::list<snake_segment>::iterator it = Segments->begin(); it != Segments->end(); it++)
 	{
-		if (it != Segments->begin())
+		if (it != Segments->begin() && it->IntangibleTimer == 0)
 		{
 			if (abs(HeadLocation.X - it->Location.X) < .9 && abs(HeadLocation.Y - it->Location.Y) < .9)
 			{

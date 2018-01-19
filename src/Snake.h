@@ -15,9 +15,10 @@ public:
 	vec2 Direction;
 	int Color;
 	snake* Snake;
+	float IntangibleTimer;  //counts down. Segment cannot cause a collision until it hits zero.
 
+	//snake_segment(vec2 Location, vec2 Direction);
 	vec2 RealLocation();
-	//bool IsExploding;
 };
 
 class snake
@@ -31,7 +32,7 @@ public:
 	snake_segment* Head;
 
 	snake(int Length, vec2 InitialPosition, vec2 InitialDirection);
-	void snake::SetDirection(float x, float y);		//TODO: Lose the ints?
+	void snake::SetDirection(float x, float y);
 	void snake::SetDirection(vec2 Direction);
 	void snake::AddSegments(int NewSegmentCount);
 	int snake::GetColor(int SegmentNumber);

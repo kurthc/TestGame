@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <list>
+#include <cmath>
 #include "Global.h"
 #include "Math.h"
 #include "Buffer.h"
