@@ -17,7 +17,7 @@ public:
 	snake* Snake;
 	float IntangibleTimer;  //counts down. Segment cannot cause a collision until it hits zero.
 
-	//snake_segment(vec2 Location, vec2 Direction);
+	snake_segment(vec2 Location, vec2 Direction, snake* Snake);
 	vec2 RealLocation();
 };
 

@@ -1,11 +1,13 @@
 #include "Snake.h"
 
-//snake_segment::snake_segment(vec2 Location, vec2 Direction)
-//{
-//	this->Location = Location;
-//	this->Direction = Direction;
-//	this->IntangibleTimer = 1.0f;
-//}
+snake_segment::snake_segment(vec2 Location, vec2 Direction, snake* Snake)
+{
+	this->Location = Location;
+	this->Direction = Direction;
+	this->IntangibleTimer = 1.0f;
+	this->Snake = Snake;
+	this->Color = Snake->GetColor(Snake->Segments.size() + 1);
+}
 
 vec2 snake_segment::RealLocation()
 {
@@ -18,31 +20,18 @@ vec2 snake_segment::RealLocation()
 
 snake::snake(int Length, vec2 InitialPosition, vec2 InitialDirection)
 {
+	
 	// Create the initial snake.
 	this->Direction = InitialDirection;
 
-	vec2 LastSegmentLocation = { 0, 0 };
-	for (int i = 0; i < Length; i++)
-	{
-		snake_segment *ss = new snake_segment();
-		ss->Location = InitialPosition;
-		ss->Color = this->GetColor(i);
-		ss->Snake = this;
-		ss->IntangibleTimer = 1.0f;
-
-		if (i == 0)
-		{
-			ss->Direction = InitialDirection;
-		}
-		else
-		{
-			ss->Direction = LastSegmentLocation - ss->Location;
-		}
-		LastSegmentLocation = ss->Location;
-		this->Segments.push_back(*ss);
-	}
-
+	snake_segment* ssHead = new snake_segment(InitialPosition, InitialDirection, this);
+	this->Segments.push_back(*ssHead);
+	
+	//Question: Why doesn't it work to set this->Head to ssHead? Is push_back() putting a copy of ssHead in the list?
+	//Answer: Because it's a list of values, not pointers. Change to list<snake_segment*> ?
 	this->Head = &(this->Segments.front());
+
+	this->AddSegments(Length - 1);
 
 	this->Speed = 1.5;
 	this->Timer = 0;
@@ -68,12 +57,7 @@ void snake::AddSegments(int NewSegmentCount)
 	for (int i = 0; i < NewSegmentCount; i++)
 	{
 		// Add new segments at the location of the last segment moving toward the last segment (i.e. not moving)
-		snake_segment *NewSegment = new snake_segment();
-		NewSegment->Location = this->Segments.back().Location;
-		NewSegment->Direction.SetXY(0, 0);
-		NewSegment->Color = this->GetColor(ExistingSegmentCount + i);
-		NewSegment->Snake = this;
-		NewSegment->IntangibleTimer = 1.0f;
+		snake_segment *NewSegment = new snake_segment(this->Segments.back().Location, vec2(0,0), this);
 		this->Segments.push_back(*NewSegment);
 	}
 }

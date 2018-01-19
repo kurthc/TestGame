@@ -5,14 +5,15 @@
 void GameStateInitialize(game_state *GameState, game_offscreen_buffer *Buffer)
 {
 	// Create the game map.
-	GameState->GameMap = CreateBlankMap(30, 20);
+	//GameState->GameMap = CreateBlankMap(30, 20);
+	GameState->GameMap = CreateBlankMap(20, 15);
 	
 	GameState->IsGameOver = false;
 
 	// Create the snake
 	vec2 InitialPosition = {2, 2};
 	vec2 InitialDirection = {1, 0};
-	GameState->Snake = new snake(1, InitialPosition, InitialDirection);
+	GameState->Snake = new snake(5, InitialPosition, InitialDirection);
 
 	Buffer->MapRegionInUse.x = Buffer->MapRegionTotal.x;
 	Buffer->MapRegionInUse.y = Buffer->MapRegionTotal.y;
@@ -112,7 +113,8 @@ void ProcessSnake(game_state* GameState, snake *Snake)
 	std::list<pellet>::iterator it = GameState->Pellets.begin();
 	while (it != GameState->Pellets.end())
 	{
-		if (it->Location.X == SnakeHead->Location.X && it->Location.Y == SnakeHead->Location.Y)
+		//if (it->Location.X == SnakeHead->Location.X && it->Location.Y == SnakeHead->Location.Y)
+		if (abs(it->Location.X - SnakeHead->Location.X) < .1 && abs(it->Location.Y - SnakeHead->Location.Y) < .1)
 		{
 			// Snake head is on a pellet. Clear the pellet. (This works because the parameters are
 			// evaluated before the function call.)
@@ -166,10 +168,11 @@ void ProcessInput(game_state *GameState, keys_down *KeysDown)
 	}
 	if (KeysDown->Space)
 	{
+		bool Dummy = false;
 		//GameState->Snake.AddSegments(1);
 	}
 
-	if (DirectionChanged)
+ 	if (DirectionChanged)
 	{
 		GameState->Snake->SetDirection(NewDirection);
 	}
