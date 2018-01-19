@@ -85,13 +85,23 @@ void ProcessSnake(game_state* GameState, snake *Snake)
 	}
 
 
-	snake_segment *SnakeHead = &(GameState->Snake->Segments.front());
+	//snake_segment *SnakeHead = &(GameState->Snake->Segments.front());
+	snake_segment *SnakeHead = GameState->Snake->Head;
+	vec2 HeadLocation = SnakeHead->RealLocation();
 
-	if (SnakeHead->Location.X < 0 || SnakeHead->Location.Y < 0)
+	if (HeadLocation.X < 0 || HeadLocation.Y < 0 || HeadLocation.X > GameState->GameMap->Width-1 || HeadLocation.Y > GameState->GameMap->Height-1)
 	{
 		GameState->IsGameOver = true;
 	}
-	
+
+
+	for (std::list<snake_segment>::iterator it = std::next(Segments->begin(), 2); it != Segments->end(); it++)
+	{
+		if (abs(HeadLocation.X - it->Location.X) < .9 && abs(HeadLocation.Y - it->Location.Y) < .9)
+		{
+			GameState->IsGameOver = true;
+		}
+	}
 	
 	// Check if the snake hit a pellet.
 	std::list<pellet>::iterator it = GameState->Pellets.begin();

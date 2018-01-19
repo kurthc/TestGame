@@ -1,5 +1,14 @@
 #include "Snake.h"
 
+vec2 snake_segment::RealLocation()
+{
+	snake* Snake = this->Snake;
+	float RealX = this->Location.X + (*Snake).Timer * this->Direction.X;
+	float RealY = this->Location.Y + (*Snake).Timer * this->Direction.Y;
+	return { RealX, RealY };
+}
+
+
 snake::snake(int Length, vec2 InitialPosition, vec2 InitialDirection)
 {
 	// Create the initial snake.
@@ -11,6 +20,7 @@ snake::snake(int Length, vec2 InitialPosition, vec2 InitialDirection)
 		snake_segment *ss = new snake_segment();
 		ss->Location = InitialPosition;
 		ss->Color = this->GetColor(i);
+		ss->Snake = this;
 
 		if (i == 0)
 		{
@@ -23,6 +33,8 @@ snake::snake(int Length, vec2 InitialPosition, vec2 InitialDirection)
 		LastSegmentLocation = ss->Location;
 		this->Segments.push_back(*ss);
 	}
+
+	this->Head = &(this->Segments.front());
 
 	this->Speed = 1.5;
 	this->Timer = 0;
@@ -52,6 +64,7 @@ void snake::AddSegments(int NewSegmentCount)
 		NewSegment->Location = this->Segments.back().Location;
 		NewSegment->Direction.SetXY(0, 0);
 		NewSegment->Color = this->GetColor(ExistingSegmentCount + i);
+		NewSegment->Snake = this;
 		this->Segments.push_back(*NewSegment);
 	}
 }
