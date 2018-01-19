@@ -12,7 +12,7 @@ void GameStateInitialize(game_state *GameState, game_offscreen_buffer *Buffer)
 	// Create the snake
 	vec2 InitialPosition = {2, 2};
 	vec2 InitialDirection = {1, 0};
-	GameState->Snake = new snake(2, InitialPosition, InitialDirection);
+	GameState->Snake = new snake(1, InitialPosition, InitialDirection);
 
 	Buffer->MapRegionInUse.x = Buffer->MapRegionTotal.x;
 	Buffer->MapRegionInUse.y = Buffer->MapRegionTotal.y;
@@ -95,11 +95,15 @@ void ProcessSnake(game_state* GameState, snake *Snake)
 	}
 
 
-	for (std::list<snake_segment>::iterator it = std::next(Segments->begin(), 2); it != Segments->end(); it++)
+	//for (std::list<snake_segment>::iterator it = std::next(Segments->begin(), 2); it != Segments->end(); it++)
+	for (std::list<snake_segment>::iterator it = Segments->begin(); it != Segments->end(); it++)
 	{
-		if (abs(HeadLocation.X - it->Location.X) < .9 && abs(HeadLocation.Y - it->Location.Y) < .9)
+		if (it != Segments->begin())
 		{
-			GameState->IsGameOver = true;
+			if (abs(HeadLocation.X - it->Location.X) < .9 && abs(HeadLocation.Y - it->Location.Y) < .9)
+			{
+				GameState->IsGameOver = true;
+			}
 		}
 	}
 	
