@@ -7,18 +7,6 @@
 #include "Buffer.h"
 #include "Snake.h"
 
-
-//class hero
-//{
-//public:
-//	vec2 Position;
-//	int Width;
-//	int Height;
-//	int Color;
-//	float Speed;
-//	vec2 HeroDirection;
-//};
-
 class pellet
 {
 public:
@@ -37,7 +25,7 @@ public:
 class game_state
 {
 public:
-	//hero Hero;
+	bool IsGameOver;
 	snake *Snake;
 	std::list<pellet> Pellets;
 	float NewPelletTimer;
@@ -52,6 +40,7 @@ game_map *CreateBlankMap(int Width, int Height);
 void GameStateInitialize(game_state *GameState, game_offscreen_buffer *Buffer);
 void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen_buffer *Buffer);
 void ProcessInput(game_state *GameState, keys_down *KeysDown);
+void ProcessSnake(game_state *GameState, snake *Snake);
 void ProcessTimers(game_state *GameState);
 void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer);
 //intrectangle ConvertMapTileToDisplayRectangle(intrectangle r, int MaxX, int MaxY, int x, int y);

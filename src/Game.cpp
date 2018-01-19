@@ -7,6 +7,8 @@ void GameStateInitialize(game_state *GameState, game_offscreen_buffer *Buffer)
 	// Create the game map.
 	GameState->GameMap = CreateBlankMap(30, 20);
 	
+	GameState->IsGameOver = false;
+
 	// Create the snake
 	vec2 InitialPosition = {2, 2};
 	vec2 InitialDirection = {1, 0};
@@ -36,13 +38,62 @@ game_map *CreateBlankMap(int Width, int Height)
 
 void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen_buffer *GameBuffer)
 {
-	ProcessInput(GameState, KeysDown);
 
-	ProcessTimers(GameState);
-	ProcessSnake(GameState->Snake);
+	if (GameState->IsGameOver)
+	{
+
+	}
+	else
+	{
+
+		ProcessInput(GameState, KeysDown);
+
+		ProcessTimers(GameState);   // Currently just adds pellets
+
+		ProcessSnake(GameState, GameState->Snake);    // Move the snake, check for collisions.
+
+
+	}
+}
+
+
+
+// Update the snake's location.
+void ProcessSnake(game_state* GameState, snake *Snake)
+{
+	std::list<snake_segment> *Segments = &(Snake->Segments);
+
+	// The timer counts up to 1. When it gets there, move the snake.
+	Snake->Timer += Snake->Speed / 30;   // FPS?
+	if (Snake->Timer >= 1)
+	{
+		vec2 LastLocation = {0, 0};
+		for (std::list<snake_segment>::iterator it = Segments->begin(); it != Segments->end(); it++)
+		{
+			it->Location = it->Location + it->Direction;
+			if (it == Segments->begin())
+			{
+				it->Direction = Snake->Direction;
+			}
+			else
+			{
+				it->Direction = LastLocation - it->Location;
+			}
+			LastLocation = it->Location;
+		}
+		Snake->Timer = 0;
+	}
+
 
 	snake_segment *SnakeHead = &(GameState->Snake->Segments.front());
 
+	if (SnakeHead->Location.X < 0 || SnakeHead->Location.Y < 0)
+	{
+		GameState->IsGameOver = true;
+	}
+	
+	
+	// Check if the snake hit a pellet.
 	std::list<pellet>::iterator it = GameState->Pellets.begin();
 	while (it != GameState->Pellets.end())
 	{
@@ -53,6 +104,7 @@ void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen
 			GameState->Pellets.erase(it++);
 			GameState->Snake->AddSegments(3);
 			std::cout << "Ate a pellet!" << std::endl;
+			//GameState->IsGameOver = true;
 		}
 		else
 		{
@@ -60,7 +112,13 @@ void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen
 		}
 	}
 
+
+
 }
+
+
+
+
 
 void ProcessInput(game_state *GameState, keys_down *KeysDown)
 {
@@ -104,11 +162,11 @@ void ProcessInput(game_state *GameState, keys_down *KeysDown)
 
 void ProcessTimers(game_state *GameState)
 {
-	GameState->NewPelletTimer -= 1.0f / 30;
+	GameState->NewPelletTimer -= 1.0f / 30.0f;
 	if (GameState->NewPelletTimer <= 0)
 	{
 		AddPellet(GameState);
-		GameState->NewPelletTimer = 10;
+		GameState->NewPelletTimer = 10.0f;
 	}
 }
 

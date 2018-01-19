@@ -29,5 +29,3 @@ public:
 	void snake::AddSegments(int NewSegmentCount);
 	int snake::GetColor(int SegmentNumber);
 };
-
-void ProcessSnake(snake *Snake);
