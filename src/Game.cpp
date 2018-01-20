@@ -230,7 +230,7 @@ void DrawMap(game_state *GameState, game_offscreen_buffer *Buffer)
 		for (int x = 0; x < GameMap->Width; x++)
 		{
 			vec2 UpperLeftCorner = MapToDisplayCoordinates(x, y, GameState, Buffer);
-			DrawRectangle(Buffer, UpperLeftCorner.X, UpperLeftCorner.Y, 2.0, 2.0, RGB(.5, .5, .5));
+			Buffer->DrawRectangle(UpperLeftCorner.X, UpperLeftCorner.Y, 2.0, 2.0, RGB(.5, .5, .5));
 		}
 	}
 }
@@ -247,8 +247,8 @@ void DrawBorder(game_state *GameState, game_offscreen_buffer *Buffer)
 	Outer.Width = Inner.Width + 2 * BorderWidth;
 	Outer.Height = Inner.Height + 2 * BorderWidth;
 
-	DrawRectangle(Buffer, Outer, Color);
-	DrawRectangle(Buffer, Inner, RGB(0.0, 0.0, 0.0));
+	Buffer->DrawRectangle(Outer, Color);
+	Buffer->DrawRectangle(Inner, RGB(0.0, 0.0, 0.0));
 }
 
 void DrawSnake(game_state *GameState, game_offscreen_buffer *Buffer)
@@ -263,14 +263,15 @@ void DrawSnake(game_state *GameState, game_offscreen_buffer *Buffer)
 		vec2 DrawLocation = it->Location + it->Direction * Snake->Timer;
 		
 		rectangle Rec = MapToDisplayRectangle(DrawLocation.X, DrawLocation.Y, 1, 1, GameState, Buffer);
-		DrawRectangle(Buffer, Rec.x, Rec.y, Rec.Width, Rec.Height, it->Color);
+		Buffer->DrawRectangle(Rec.x, Rec.y, Rec.Width, Rec.Height, it->Color);
 	}
 
 }
 
 void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer)
 {
-	ClearBuffer(Buffer);
+	Buffer->ClearBuffer();
+	//ClearBuffer(Buffer);
 	DrawBorder(GameState, Buffer);
 	DrawMap(GameState, Buffer);
 
@@ -278,7 +279,7 @@ void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer)
 	for (std::list<pellet>::iterator it = GameState->Pellets.begin(); it != GameState->Pellets.end(); it++)
 	{
 		rectangle Rec = MapToDisplayRectangle(it->Location.X, it->Location.Y, 1.0, 1.0, GameState, Buffer);
-		DrawRectangle(Buffer, Rec.x, Rec.y, Rec.Width, Rec.Height, it->Color);
+		Buffer->DrawRectangle(Rec.x, Rec.y, Rec.Width, Rec.Height, it->Color);
 	}
 
 	DrawSnake(GameState, Buffer);

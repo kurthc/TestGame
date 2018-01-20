@@ -17,10 +17,9 @@ public:
 	int MapBorderColor = RGB(1, 0, 1);
 
 	game_offscreen_buffer(int TotalWidth, int TotalHeight);
+	void ClearBuffer();
+	void DrawRectangle(int X, int Y, int Width, int Height, int32_t Color);
+	void DrawRectangle(float Left, float Top, float Width, float Height, int32_t Color);
+	void DrawRectangle(intrectangle Rect, int32_t Color);
+
 };
-
-
-void ClearBuffer(game_offscreen_buffer *Buffer);
-void DrawRectangle(game_offscreen_buffer *Buffer, int X, int Y, int Width, int Height, int32_t Color);
-void DrawRectangle(game_offscreen_buffer *Buffer, float Left, float Top, float Width, float Height, int32_t Color);
-void DrawRectangle(game_offscreen_buffer *Buffer, intrectangle Rect, int32_t Color);

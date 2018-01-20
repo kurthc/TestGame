@@ -12,52 +12,52 @@ game_offscreen_buffer::game_offscreen_buffer(int TotalWidth, int TotalHeight)
 	this->MapRegionTotal.Height = TotalHeight - 100;
 }
 
-void ClearBuffer(game_offscreen_buffer *Buffer)
+void game_offscreen_buffer::ClearBuffer()
 {
-	int32_t *Pixel = (int32_t*)Buffer->Memory;
+	int32_t *Pixel = (int32_t*)this->Memory;
 
-	for (int i = 0; i < Buffer->TotalWidth * Buffer->TotalHeight; i++)
+	for (int i = 0; i < this->TotalWidth * this->TotalHeight; i++)
 	{
 		Pixel[i] = 0;
 	}
 }
 
-void DrawRectangle(game_offscreen_buffer *Buffer, int Left, int Top, int Width, int Height, int32_t Color)
+void game_offscreen_buffer::DrawRectangle(int Left, int Top, int Width, int Height, int32_t Color)
 {
-	int32_t* Pixel = (int32_t*)Buffer->Memory;
+	int32_t* Pixel = (int32_t*)this->Memory;
 
-	//for (int y = MAX(Top, 0); y < Top + Height && y < Buffer->TotalHeight; y++)
-	for (int y = MAX(Top, 0); y < Top + Height && y < Buffer->TotalHeight; y++)
+	for (int y = MAX(Top, 0); y < Top + Height && y < this->TotalHeight; y++)
 	{
-		for (int x = MAX(Left, 0); x < Left + Width && x < Buffer->TotalWidth; x++)
+		for (int x = MAX(Left, 0); x < Left + Width && x < this->TotalWidth; x++)
 		{
-			Pixel[y*Buffer->TotalWidth + x] = Color;
+			Pixel[y*this->TotalWidth + x] = Color;
 		}
 	}
 }
 
-void DrawRectangle(game_offscreen_buffer *Buffer, float Left, float Top, float Width, float Height, int32_t Color)
+void game_offscreen_buffer::DrawRectangle(float Left, float Top, float Width, float Height, int32_t Color)
 {
-	DrawRectangle(Buffer, (int)Left, (int)Top, (int)Width, (int)Height, Color);
+	this->DrawRectangle((int)Left, (int)Top, (int)Width, (int)Height, Color);
 }
 
-void DrawRectangle(game_offscreen_buffer *Buffer, intrectangle Rect, int32_t Color)
+void game_offscreen_buffer::DrawRectangle(intrectangle Rect, int32_t Color)
 {
-	DrawRectangle(Buffer, Rect.x, Rect.y, Rect.Width, Rect.Height, Color);
+	this->DrawRectangle(Rect.x, Rect.y, Rect.Width, Rect.Height, Color);
 }
 
-void DrawCircle(game_offscreen_buffer *Buffer, int Left, int Top, int Width, int Height, int32_t Color)
-{
-	float CenterX = (float)Left + Width / 2.0;
-	float CenterY = (float)Top + Height / 2.0;
-
-	int32_t* Pixel = (int32_t*)Buffer->Memory;
-
-	for (int y = MAX(Top, 0); y < Top + Height && y < Buffer->TotalHeight; y++)
-	{
-		for (int x = MAX(Left, 0); x < Left + Width && x < Buffer->TotalWidth; x++)
-		{
-			Pixel[y*Buffer->TotalWidth + x] = Color;
-		}
-	}
-}
+//
+//void DrawCircle(game_offscreen_buffer *Buffer, int Left, int Top, int Width, int Height, int32_t Color)
+//{
+//	float CenterX = (float)Left + Width / 2.0;
+//	float CenterY = (float)Top + Height / 2.0;
+//
+//	int32_t* Pixel = (int32_t*)Buffer->Memory;
+//
+//	for (int y = MAX(Top, 0); y < Top + Height && y < Buffer->TotalHeight; y++)
+//	{
+//		for (int x = MAX(Left, 0); x < Left + Width && x < Buffer->TotalWidth; x++)
+//		{
+//			Pixel[y*Buffer->TotalWidth + x] = Color;
+//		}
+//	}
+//}
