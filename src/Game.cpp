@@ -10,10 +10,6 @@ game_state::game_state(game_offscreen_buffer* Buffer)
 	//GameState->GameMap = new game_map(30, 20);
 	this->GameMap = new game_map(20, 15);
 
-	// Create the snake
-	vec2 InitialPosition = {2, 2};
-	vec2 InitialDirection = {1, 0};
-	this->Snake = new snake(5, InitialPosition, InitialDirection);
 
 	Buffer->MapRegionInUse.x = Buffer->MapRegionTotal.x;
 	Buffer->MapRegionInUse.y = Buffer->MapRegionTotal.y;
@@ -21,7 +17,14 @@ game_state::game_state(game_offscreen_buffer* Buffer)
 	Buffer->MapRegionInUse.Width = (float)Buffer->MapRegionTotal.Height / this->GameMap->Height * this->GameMap->Width;
 
 	this->NewPelletTimer = 3;
+}
 
+game_round_state::game_round_state()
+{
+	// Create the snake
+	vec2 InitialPosition = { 2, 2 };
+	vec2 InitialDirection = { 1, 0 };
+	this->Snake = new snake(5, InitialPosition, InitialDirection);
 
 }
 
@@ -38,6 +41,8 @@ game_map::game_map(int Width, int Height)
 }
 
 
+
+
 void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen_buffer *GameBuffer)
 {
 
@@ -49,7 +54,7 @@ void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen
 	{
 		ProcessInput(GameState, KeysDown);
 		ProcessTimers(GameState);   // Currently just adds pellets
-		ProcessSnake(GameState, GameState->Snake);    // Move the snake, check for collisions.
+		ProcessSnake(GameState, GameState->CurrentRound.Snake);    // Move the snake, check for collisions.
 	}
 }
 
@@ -89,7 +94,7 @@ void ProcessSnake(game_state* GameState, snake *Snake)
 
 
 	//snake_segment *SnakeHead = &(GameState->Snake->Segments.front());
-	snake_segment *SnakeHead = GameState->Snake->Head;
+	snake_segment *SnakeHead = Snake->Head;
 	vec2 HeadLocation = SnakeHead->RealLocation();
 
 	if (HeadLocation.X < 0 || HeadLocation.Y < 0 || HeadLocation.X > GameState->GameMap->Width-1 || HeadLocation.Y > GameState->GameMap->Height-1)
@@ -120,7 +125,7 @@ void ProcessSnake(game_state* GameState, snake *Snake)
 			// Snake head is on a pellet. Clear the pellet. (This works because the parameters are
 			// evaluated before the function call.)
 			GameState->Pellets.erase(it++);
-			GameState->Snake->AddSegments(3);
+			GameState->CurrentRound.Snake->AddSegments(3);
 			std::cout << "Ate a pellet!" << std::endl;
 			//GameState->IsGameOver = true;
 		}
@@ -175,7 +180,7 @@ void ProcessInput(game_state *GameState, keys_down *KeysDown)
 
  	if (DirectionChanged)
 	{
-		GameState->Snake->SetDirection(NewDirection);
+		GameState->CurrentRound.Snake->SetDirection(NewDirection);
 	}
 }
 
@@ -254,7 +259,7 @@ void DrawBorder(game_state *GameState, game_offscreen_buffer *Buffer)
 
 void DrawSnake(game_state *GameState, game_offscreen_buffer *Buffer)
 {
-	snake *Snake = GameState->Snake;
+	snake *Snake = GameState->CurrentRound.Snake;
 	game_map *GameMap = GameState->GameMap;
 	std::list<snake_segment> Segments = Snake->Segments;
 

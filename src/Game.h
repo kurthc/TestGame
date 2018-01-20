@@ -28,7 +28,9 @@ public:
 class game_round_state
 {
 public:
+	snake * Snake;
 
+	game_round_state();
 };
 
 class game_state
@@ -37,7 +39,6 @@ public:
 	game_round_state CurrentRound;
 	
 	bool IsGameOver;
-	snake *Snake;
 	std::list<pellet> Pellets;
 	float NewPelletTimer;
 
