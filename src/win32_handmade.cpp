@@ -148,18 +148,6 @@ static LRESULT CALLBACK Win32MainWindowCallback(HWND Window, UINT Message, WPARA
     return(Result);
 }
 
-//void SendIntToDebug(int n)
-//{
-//	char MsgBuffer[256];
-//	wsprintf(MsgBuffer, "%d\n", n);
-//	OutputDebugStringA(MsgBuffer);
-//}
-//
-//void SendStringToDebug(char *Message)
-//{
-//	OutputDebugStringA(Message);
-//}
-
 float GetSeconds()
 {
 	LARGE_INTEGER Counts;
@@ -231,7 +219,7 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 			GameBuffer->Memory = GlobalBackBuffer.Memory;
 
 			game_state* GameState = new game_state(GameBuffer);
-			
+			GameState->Buffer = GameBuffer;
 
 			GlobalRunning = true;
 			float LastFrameStart = GetSeconds();

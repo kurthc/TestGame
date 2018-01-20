@@ -34,7 +34,7 @@ public:
 class game_round_state
 {
 public:
-	snake * Snake;
+	snake* Snake;
 
 	float NewPelletTimer;
 	std::list<pellet> Pellets;
@@ -114,7 +114,8 @@ public:
 	void DrawRectangle(int X, int Y, int Width, int Height, int32_t Color);
 	void DrawRectangle(float Left, float Top, float Width, float Height, int32_t Color);
 	void DrawRectangle(intrectangle Rect, int32_t Color);
-
+	void DrawBorder(game_state *GameState);
+	void DrawSnake(game_state *GameState);
 };
 
 

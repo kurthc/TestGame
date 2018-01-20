@@ -61,3 +61,23 @@ void game_offscreen_buffer::DrawRectangle(intrectangle Rect, int32_t Color)
 //		}
 //	}
 //}
+
+
+void game_offscreen_buffer::DrawBorder(game_state *GameState)
+{
+	//game_offscreen_buffer *Buffer = GameState->Buffer;
+	//rectangle Inner = GameState->GameboardDisplayRegion;
+	intrectangle Inner = this->MapRegionInUse;
+	intrectangle Outer = {};
+	int BorderWidth = this->MapBorderThickness;
+	int Color = this->MapBorderColor;
+	Outer.x = Inner.x - BorderWidth;
+	Outer.y = Inner.y - BorderWidth;
+	Outer.Width = Inner.Width + 2 * BorderWidth;
+	Outer.Height = Inner.Height + 2 * BorderWidth;
+
+	this->DrawRectangle(Outer, Color);
+	this->DrawRectangle(Inner, RGB(0.0, 0.0, 0.0));
+}
+
+

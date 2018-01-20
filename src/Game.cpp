@@ -248,21 +248,7 @@ void DrawMap(game_state *GameState, game_offscreen_buffer *Buffer)
 	}
 }
 
-void DrawBorder(game_state *GameState, game_offscreen_buffer *Buffer)
-{
-	//rectangle Inner = GameState->GameboardDisplayRegion;
-	intrectangle Inner = Buffer->MapRegionInUse;
-	intrectangle Outer = {};
-	int BorderWidth = Buffer->MapBorderThickness;
-	int Color = Buffer->MapBorderColor;
-	Outer.x = Inner.x - BorderWidth;
-	Outer.y = Inner.y - BorderWidth;
-	Outer.Width = Inner.Width + 2 * BorderWidth;
-	Outer.Height = Inner.Height + 2 * BorderWidth;
 
-	Buffer->DrawRectangle(Outer, Color);
-	Buffer->DrawRectangle(Inner, RGB(0.0, 0.0, 0.0));
-}
 
 void DrawSnake(game_state *GameState, game_offscreen_buffer *Buffer)
 {
@@ -285,7 +271,7 @@ void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer)
 {
 	Buffer->ClearBuffer();
 	//ClearBuffer(Buffer);
-	DrawBorder(GameState, Buffer);
+	Buffer->DrawBorder(GameState);
 	DrawMap(GameState, Buffer);
 
 	// Draw the pellets.
