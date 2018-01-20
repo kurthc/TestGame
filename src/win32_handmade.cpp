@@ -226,12 +226,11 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 			// Since we specified CS_OWNDC, we can just get one device context and use it forever because we are not sharing it with anyone.
             HDC DeviceContext = GetDC(Window);
 
-			game_offscreen_buffer GameBuffer(GlobalBackBuffer.Width, GlobalBackBuffer.Height);
-			GameBuffer.Memory = GlobalBackBuffer.Memory;
+			//game_offscreen_buffer GameBuffer(GlobalBackBuffer.Width, GlobalBackBuffer.Height);
+			game_offscreen_buffer* GameBuffer = new game_offscreen_buffer(GlobalBackBuffer.Width, GlobalBackBuffer.Height);
+			GameBuffer->Memory = GlobalBackBuffer.Memory;
 
-			// Make this static inside Game.cpp?
-			game_state GameState = {};
-			GameStateInitialize(&GameState, &GameBuffer);
+			game_state* GameState = new game_state(GameBuffer);
 
 			GlobalRunning = true;
 			float LastFrameStart = GetSeconds();
@@ -245,8 +244,8 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
             {
 				// Handle Windows messages, process the game, and render the buffer.
 				Win32HandleMessages();
-				GameStateProcess(&GameState, &KeysDown, &GameBuffer);
-				RenderBuffer(&GameState, &GameBuffer);
+				GameStateProcess(GameState, &KeysDown, GameBuffer);
+				RenderBuffer(GameState, GameBuffer);
 
 				// Do something with sleep here?
 				CurrentTime = GetSeconds();

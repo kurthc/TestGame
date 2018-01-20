@@ -1,26 +1,27 @@
 #include "Game.h"
 
-
-
-void GameStateInitialize(game_state *GameState, game_offscreen_buffer *Buffer)
+game_state::game_state(game_offscreen_buffer* Buffer)
 {
+	this->CurrentRound = game_round_state();
+
+	this->IsGameOver = false;
+
 	// Create the game map.
 	//GameState->GameMap = new game_map(30, 20);
-	GameState->GameMap = new game_map(20, 15);
-	
-	GameState->IsGameOver = false;
+	this->GameMap = new game_map(20, 15);
 
 	// Create the snake
 	vec2 InitialPosition = {2, 2};
 	vec2 InitialDirection = {1, 0};
-	GameState->Snake = new snake(5, InitialPosition, InitialDirection);
+	this->Snake = new snake(5, InitialPosition, InitialDirection);
 
 	Buffer->MapRegionInUse.x = Buffer->MapRegionTotal.x;
 	Buffer->MapRegionInUse.y = Buffer->MapRegionTotal.y;
 	Buffer->MapRegionInUse.Height = Buffer->MapRegionTotal.Height;
-	Buffer->MapRegionInUse.Width = (float)Buffer->MapRegionTotal.Height / GameState->GameMap->Height * GameState->GameMap->Width;
+	Buffer->MapRegionInUse.Width = (float)Buffer->MapRegionTotal.Height / this->GameMap->Height * this->GameMap->Width;
 
-	GameState->NewPelletTimer = 3;
+	this->NewPelletTimer = 3;
+
 
 }
 

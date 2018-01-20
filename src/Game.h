@@ -25,9 +25,17 @@ public:
 	game_map(int Width, int Height);
 };
 
+class game_round_state
+{
+public:
+
+};
+
 class game_state
 {
 public:
+	game_round_state CurrentRound;
+	
 	bool IsGameOver;
 	snake *Snake;
 	std::list<pellet> Pellets;
@@ -35,12 +43,12 @@ public:
 
 	//rectangle GameboardDisplayRegion = { 50, 50, 600, 600 };
 	game_map *GameMap;
+	game_offscreen_buffer *Buffer;
+
+	game_state(game_offscreen_buffer* Buffer);
 };
 
 
-
-//game_map *CreateBlankMap(int Width, int Height);
-void GameStateInitialize(game_state *GameState, game_offscreen_buffer *Buffer);
 void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen_buffer *Buffer);
 void ProcessInput(game_state *GameState, keys_down *KeysDown);
 void ProcessSnake(game_state *GameState, snake *Snake);
