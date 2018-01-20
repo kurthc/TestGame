@@ -231,6 +231,7 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 			GameBuffer->Memory = GlobalBackBuffer.Memory;
 
 			game_state* GameState = new game_state(GameBuffer);
+			
 
 			GlobalRunning = true;
 			float LastFrameStart = GetSeconds();

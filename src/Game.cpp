@@ -3,20 +3,26 @@
 game_state::game_state(game_offscreen_buffer* Buffer)
 {
 	this->CurrentRound = game_round_state();
+	this->CurrentRound.GameState = this;		//Not sure why it's not working to set this in the game_round_state constructor.
 
 	this->IsGameOver = false;
 
-	// Create the game map.
-	//GameState->GameMap = new game_map(30, 20);
-	this->GameMap = new game_map(20, 15);
+	//this->KeysDown = KeysDown;
+	
+	this->GameMap = new game_map(20, 15);      // Create the game map.
 
 
 	Buffer->MapRegionInUse.x = Buffer->MapRegionTotal.x;
 	Buffer->MapRegionInUse.y = Buffer->MapRegionTotal.y;
 	Buffer->MapRegionInUse.Height = Buffer->MapRegionTotal.Height;
-	Buffer->MapRegionInUse.Width = (float)Buffer->MapRegionTotal.Height / this->GameMap->Height * this->GameMap->Width;
+	Buffer->MapRegionInUse.Width = (int)((float)Buffer->MapRegionTotal.Height / this->GameMap->Height * this->GameMap->Width);
 
-	this->NewPelletTimer = 3;
+}
+
+game_round_state::game_round_state(game_state* GameState)
+{
+	game_round_state::game_round_state();
+	this->GameState = GameState;
 }
 
 game_round_state::game_round_state()
@@ -26,6 +32,8 @@ game_round_state::game_round_state()
 	vec2 InitialDirection = { 1, 0 };
 	this->Snake = new snake(5, InitialPosition, InitialDirection);
 
+	this->NewPelletTimer = 3;
+	
 }
 
 game_map::game_map(int Width, int Height)
@@ -52,7 +60,8 @@ void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen
 	}
 	else
 	{
-		ProcessInput(GameState, KeysDown);
+		GameState->ProcessInput(KeysDown);
+		//ProcessInput(GameState, KeysDown);
 		ProcessTimers(GameState);   // Currently just adds pellets
 		ProcessSnake(GameState, GameState->CurrentRound.Snake);    // Move the snake, check for collisions.
 	}
@@ -116,15 +125,15 @@ void ProcessSnake(game_state* GameState, snake *Snake)
 	}
 	
 	// Check if the snake hit a pellet.
-	std::list<pellet>::iterator it = GameState->Pellets.begin();
-	while (it != GameState->Pellets.end())
+	std::list<pellet>::iterator it = GameState->CurrentRound.Pellets.begin();
+	while (it != GameState->CurrentRound.Pellets.end())
 	{
 		//if (it->Location.X == SnakeHead->Location.X && it->Location.Y == SnakeHead->Location.Y)
 		if (abs(it->Location.X - SnakeHead->Location.X) < .1 && abs(it->Location.Y - SnakeHead->Location.Y) < .1)
 		{
 			// Snake head is on a pellet. Clear the pellet. (This works because the parameters are
 			// evaluated before the function call.)
-			GameState->Pellets.erase(it++);
+			GameState->CurrentRound.Pellets.erase(it++);
 			GameState->CurrentRound.Snake->AddSegments(3);
 			std::cout << "Ate a pellet!" << std::endl;
 			//GameState->IsGameOver = true;
@@ -140,10 +149,8 @@ void ProcessSnake(game_state* GameState, snake *Snake)
 }
 
 
-
-
-
-void ProcessInput(game_state *GameState, keys_down *KeysDown)
+//void ProcessInput(game_state *GameState, keys_down *KeysDown)
+void game_state::ProcessInput(keys_down *KeysDown)
 {
 	vec2 NewDirection;
 	bool DirectionChanged = false;
@@ -180,17 +187,17 @@ void ProcessInput(game_state *GameState, keys_down *KeysDown)
 
  	if (DirectionChanged)
 	{
-		GameState->CurrentRound.Snake->SetDirection(NewDirection);
+		this->CurrentRound.Snake->SetDirection(NewDirection);
 	}
 }
 
 void ProcessTimers(game_state *GameState)
 {
-	GameState->NewPelletTimer -= 1.0f / 30.0f;
-	if (GameState->NewPelletTimer <= 0)
+	GameState->CurrentRound.NewPelletTimer -= 1.0f / 30.0f;
+	if (GameState->CurrentRound.NewPelletTimer <= 0)
 	{
-		AddPellet(GameState);
-		GameState->NewPelletTimer = 10.0f;
+		GameState->CurrentRound.AddPellet();
+		GameState->CurrentRound.NewPelletTimer = 10.0f;
 	}
 }
 
@@ -235,7 +242,7 @@ void DrawMap(game_state *GameState, game_offscreen_buffer *Buffer)
 	{
 		for (int x = 0; x < GameMap->Width; x++)
 		{
-			vec2 UpperLeftCorner = MapToDisplayCoordinates(x, y, GameState, Buffer);
+			vec2 UpperLeftCorner = MapToDisplayCoordinates((float)x, (float)y, GameState, Buffer);
 			Buffer->DrawRectangle(UpperLeftCorner.X, UpperLeftCorner.Y, 2.0, 2.0, RGB(.5, .5, .5));
 		}
 	}
@@ -282,7 +289,7 @@ void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer)
 	DrawMap(GameState, Buffer);
 
 	// Draw the pellets.
-	for (std::list<pellet>::iterator it = GameState->Pellets.begin(); it != GameState->Pellets.end(); it++)
+	for (std::list<pellet>::iterator it = GameState->CurrentRound.Pellets.begin(); it != GameState->CurrentRound.Pellets.end(); it++)
 	{
 		rectangle Rec = MapToDisplayRectangle(it->Location.X, it->Location.Y, 1.0, 1.0, GameState, Buffer);
 		Buffer->DrawRectangle(Rec.x, Rec.y, Rec.Width, Rec.Height, it->Color);
@@ -292,13 +299,13 @@ void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer)
 }
 
 
-void AddPellet(game_state *GameState)
+void game_round_state::AddPellet()
 {
-	int x = (rand() % GameState->GameMap->Width);
-	int y = (rand() % GameState->GameMap->Height);
-	pellet *Pellet = new pellet();
-	Pellet->Location.SetXY(x, y);
+	int x = (rand() % this->GameState->GameMap->Width);
+	int y = (rand() % this->GameState->GameMap->Height);
+	pellet *Pellet = new pellet();		//TODO: Destroy these when done.
+	Pellet->Location.SetXY((float)x, (float)y);
 	Pellet->Color = RGB(1.0, 1.0, 1.0);
-	GameState->Pellets.push_back(*Pellet);
+	this->Pellets.push_back(*Pellet);
 }
 
