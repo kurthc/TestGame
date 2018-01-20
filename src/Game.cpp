@@ -5,8 +5,8 @@
 void GameStateInitialize(game_state *GameState, game_offscreen_buffer *Buffer)
 {
 	// Create the game map.
-	//GameState->GameMap = CreateBlankMap(30, 20);
-	GameState->GameMap = CreateBlankMap(20, 15);
+	//GameState->GameMap = new game_map(30, 20);
+	GameState->GameMap = new game_map(20, 15);
 	
 	GameState->IsGameOver = false;
 
@@ -24,18 +24,18 @@ void GameStateInitialize(game_state *GameState, game_offscreen_buffer *Buffer)
 
 }
 
-game_map *CreateBlankMap(int Width, int Height)
+game_map::game_map(int Width, int Height)
 {
-	game_map *GameMap = new game_map();
-	GameMap->Width = Width;
-	GameMap->Height = Height;
-	GameMap->Bytes = new uint8_t[Width * Height];
+	//game_map *GameMap = new game_map();
+	this->Width = Width;
+	this->Height = Height;
+	this->Bytes = new uint8_t[Width * Height];
 	for (int i = 0; i < Width*Height; i++)
 	{
-		*((uint8_t *)(GameMap->Bytes) + i) = 0;
+		*((uint8_t *)(this->Bytes) + i) = 0;
 	}
-	return GameMap;
 }
+
 
 void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen_buffer *GameBuffer)
 {

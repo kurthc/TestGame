@@ -21,6 +21,8 @@ public:
 	int Width;
 	int Height;
 	void *Bytes;
+	
+	game_map(int Width, int Height);
 };
 
 class game_state
@@ -37,7 +39,7 @@ public:
 
 
 
-game_map *CreateBlankMap(int Width, int Height);
+//game_map *CreateBlankMap(int Width, int Height);
 void GameStateInitialize(game_state *GameState, game_offscreen_buffer *Buffer);
 void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen_buffer *Buffer);
 void ProcessInput(game_state *GameState, keys_down *KeysDown);
