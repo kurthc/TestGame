@@ -1,6 +1,6 @@
 #pragma once
 
-//#include "Game.h"
+#include "Game.h"
 #include "Global.h"
 #include "Math.h"
 
@@ -21,5 +21,12 @@ public:
 	void DrawRectangle(int X, int Y, int Width, int Height, int32_t Color);
 	void DrawRectangle(float Left, float Top, float Width, float Height, int32_t Color);
 	void DrawRectangle(intrectangle Rect, int32_t Color);
+	void RenderBuffer(game_state *GameState);
 
 };
+
+vec2 MapToDisplayCoordinates(float x, float y, game_state *GameState, game_offscreen_buffer *Buffer);
+rectangle MapToDisplayRectangle(float x, float y, float Width, float Height, game_state *GameState, game_offscreen_buffer *Buffer);
+void DrawMap(game_state *GameState, game_offscreen_buffer *Buffer);
+void DrawBorder(game_state *GameState, game_offscreen_buffer *Buffer);
+void DrawSnake(game_state *GameState, game_offscreen_buffer *Buffer);

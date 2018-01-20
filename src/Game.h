@@ -33,7 +33,7 @@ public:
 class game_round_state
 {
 public:
-	snake * Snake;
+	snake* Snake;
 
 	float NewPelletTimer;
 	std::list<pellet> Pellets;
@@ -61,12 +61,13 @@ public:
 
 	game_state(game_offscreen_buffer* Buffer);
 	void ProcessInput(keys_down *KeysDown);
+	void RenderBuffer();
 };
 
 
 void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen_buffer *Buffer);
 void ProcessSnake(game_state *GameState, snake *Snake);
 void ProcessTimers(game_state *GameState);
-void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer);
+//void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer);
 //intrectangle ConvertMapTileToDisplayRectangle(intrectangle r, int MaxX, int MaxY, int x, int y);
 //intrectangle ConvertMapTileToDisplayRectangle(int Left, int Top, int Width, int Height, int MaxX, int MaxY, int x, int y);
