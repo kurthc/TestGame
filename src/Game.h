@@ -5,13 +5,14 @@
 #include <cmath>
 #include "Global.h"
 #include "Math.h"
-#include "Buffer.h"
-#include "Snake.h"
 
 class pellet;
 class game_map;
 class game_round_state;
 class game_state;
+class snake;
+class snake_segment;
+class game_offscreen_buffer;
 
 class pellet
 {
@@ -62,6 +63,61 @@ public:
 	game_state(game_offscreen_buffer* Buffer);
 	void ProcessInput(keys_down *KeysDown);
 };
+
+
+
+class snake_segment
+{
+public:
+	vec2 Location;
+	vec2 Direction;
+	int Color;
+	snake* Snake;
+	float IntangibleTimer;  //counts down. Segment cannot cause a collision until it hits zero.
+
+	snake_segment(vec2 Location, vec2 Direction, snake* Snake);
+	vec2 RealLocation();
+};
+
+class snake
+{
+public:
+	std::list<snake_segment> Segments;
+
+	float Speed;
+	float Timer;      // The timer counts up to 1. When it gets there, move the snake.
+	vec2 Direction;
+	snake_segment* Head;
+
+	snake(int Length, vec2 InitialPosition, vec2 InitialDirection);
+	void snake::SetDirection(float x, float y);
+	void snake::SetDirection(vec2 Direction);
+	void snake::AddSegments(int NewSegmentCount);
+	int snake::GetColor(int SegmentNumber);
+};
+
+
+class game_offscreen_buffer
+{
+	// NOTE: Pixels are always 32-bits wide, Memory Order BB GG RR XX
+public:
+	void *Memory;
+	int TotalWidth;
+	int TotalHeight;
+	intrectangle MapRegionTotal;		// The part of the game screen reserved for a game map.
+	intrectangle MapRegionInUse;		// The part of the game screen actually used by the game map.
+	int MapBorderThickness = 5;
+	int MapBorderColor = RGB(1, 0, 1);
+
+	game_offscreen_buffer(int TotalWidth, int TotalHeight);
+	void ClearBuffer();
+	void DrawRectangle(int X, int Y, int Width, int Height, int32_t Color);
+	void DrawRectangle(float Left, float Top, float Width, float Height, int32_t Color);
+	void DrawRectangle(intrectangle Rect, int32_t Color);
+
+};
+
+
 
 
 void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen_buffer *Buffer);

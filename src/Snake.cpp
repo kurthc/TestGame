@@ -1,4 +1,4 @@
-#include "Snake.h"
+#include "Game.h"
 
 snake_segment::snake_segment(vec2 Location, vec2 Direction, snake* Snake)
 {

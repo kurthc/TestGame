@@ -120,11 +120,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
-    <ClInclude Include="src\Buffer.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\Global.h" />
     <ClInclude Include="src\Math.h" />
-    <ClInclude Include="src\Snake.h" />
     <ClInclude Include="src\win32_handmade.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

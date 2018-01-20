@@ -1,4 +1,4 @@
-#include "Buffer.h"
+#include "Game.h"
 
 game_offscreen_buffer::game_offscreen_buffer(int TotalWidth, int TotalHeight)
 {
