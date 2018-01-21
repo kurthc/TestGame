@@ -135,3 +135,19 @@ void game_offscreen_buffer::DrawMap(game_state *GameState)
 		}
 	}
 }
+
+void game_offscreen_buffer::RenderBuffer(game_state *GameState)
+{
+	this->ClearBuffer();
+	this->DrawBorder(GameState);
+	this->DrawMap(GameState);
+
+	// Draw the pellets.
+	for (std::list<pellet>::iterator it = GameState->CurrentRound.Pellets.begin(); it != GameState->CurrentRound.Pellets.end(); it++)
+	{
+		rectangle Rec = this->MapToDisplayRectangle(it->Location.X, it->Location.Y, 1.0, 1.0, GameState->GameMap);
+		this->DrawRectangle(Rec.x, Rec.y, Rec.Width, Rec.Height, it->Color);
+	}
+
+	this->DrawSnake(GameState);
+}

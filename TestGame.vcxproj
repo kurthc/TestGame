@@ -116,14 +116,14 @@
     <ClCompile Include="src\Global.cpp" />
     <ClCompile Include="src\Math.cpp" />
     <ClCompile Include="src\Snake.cpp" />
-    <ClCompile Include="src\win32_handmade.cpp" />
+    <ClCompile Include="src\WindowsLayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\Global.h" />
     <ClInclude Include="src\Math.h" />
-    <ClInclude Include="src\win32_handmade.h" />
+    <ClInclude Include="src\WindowsLayer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

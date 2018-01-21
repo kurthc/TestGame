@@ -54,13 +54,14 @@ game_map::game_map(int Width, int Height)
 void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen_buffer *GameBuffer)
 {
 
+	GameState->ProcessInput(KeysDown);
+
 	if (GameState->IsGameOver)
 	{
-
+		// Something will go here.
 	}
 	else
 	{
-		GameState->ProcessInput(KeysDown);
 		//ProcessInput(GameState, KeysDown);
 		ProcessTimers(GameState);   // Currently just adds pellets
 		ProcessSnake(GameState, GameState->CurrentRound.Snake);    // Move the snake, check for collisions.
@@ -141,51 +142,62 @@ void ProcessSnake(game_state* GameState, snake *Snake)
 			it++;
 		}
 	}
-
-
-
 }
 
 
 //void ProcessInput(game_state *GameState, keys_down *KeysDown)
 void game_state::ProcessInput(keys_down *KeysDown)
 {
-	vec2 NewDirection;
-	bool DirectionChanged = false;
+	if (!this->IsGameOver)
+	{
+		vec2 NewDirection;
+		bool DirectionChanged = false;
 
-	if (KeysDown->Left)
-	{
-		NewDirection = -UnitVectorX;
-		DirectionChanged = true;
-		//GameState->Snake->SetDirection(-UnitVectorX);
-	}
-	if (KeysDown->Right)
-	{
-		NewDirection = UnitVectorX;
-		DirectionChanged = true;
-		//GameState->Snake->SetDirection(UnitVectorX);
-	}
-	if (KeysDown->Up)
-	{
-		NewDirection = -UnitVectorY;
-		DirectionChanged = true;
-		//GameState->Snake->SetDirection(-UnitVectorY);
-	}
-	if (KeysDown->Down)
-	{
-		NewDirection = UnitVectorY;
-		DirectionChanged = true;
-		//GameState->Snake->SetDirection(UnitVectorY);
-	}
-	if (KeysDown->Space)
-	{
-		bool Dummy = false;
-		//GameState->Snake.AddSegments(1);
-	}
+		if (KeysDown->Left)
+		{
+			NewDirection = -UnitVectorX;
+			DirectionChanged = true;
+			//GameState->Snake->SetDirection(-UnitVectorX);
+		}
+		if (KeysDown->Right)
+		{
+			NewDirection = UnitVectorX;
+			DirectionChanged = true;
+			//GameState->Snake->SetDirection(UnitVectorX);
+		}
+		if (KeysDown->Up)
+		{
+			NewDirection = -UnitVectorY;
+			DirectionChanged = true;
+			//GameState->Snake->SetDirection(-UnitVectorY);
+		}
+		if (KeysDown->Down)
+		{
+			NewDirection = UnitVectorY;
+			DirectionChanged = true;
+			//GameState->Snake->SetDirection(UnitVectorY);
+		}
+		if (KeysDown->Space)
+		{
+			bool Dummy = false;
+			//GameState->Snake.AddSegments(1);
+		}
 
- 	if (DirectionChanged)
+		if (DirectionChanged)
+		{
+			this->CurrentRound.Snake->SetDirection(NewDirection);
+		}
+	}
+	else
 	{
-		this->CurrentRound.Snake->SetDirection(NewDirection);
+		if (KeysDown->Space)
+		{
+			//game_round_state NewRound = game_round_state(this);
+			this->CurrentRound = game_round_state();
+			this->CurrentRound.GameState = this;
+			this->IsGameOver = false;
+		}
+
 	}
 }
 
@@ -197,69 +209,6 @@ void ProcessTimers(game_state *GameState)
 		GameState->CurrentRound.AddPellet();
 		GameState->CurrentRound.NewPelletTimer = 10.0f;
 	}
-}
-
-
-
-
-
-
-//vec2 DisplayToMapCoordinates(float x, float y, game_state *GameState, game_offscreen_buffer *Buffer)
-//{
-//	//TODO: Write if needed.
-//}
-
-//rectangle MapToDisplayRectangle(rectangle r, game_state *GameState, game_offscreen_buffer *Buffer)
-//{
-//	
-//}
-//
-//void DrawMap(game_state *GameState, game_offscreen_buffer *Buffer)
-//{
-//	game_map *GameMap = GameState->GameMap;
-//	for (int y = 0; y < GameMap->Height; y++)
-//	{
-//		for (int x = 0; x < GameMap->Width; x++)
-//		{
-//			vec2 UpperLeftCorner = Buffer->MapToDisplayCoordinates((float)x, (float)y, GameState->GameMap);
-//			Buffer->DrawRectangle(UpperLeftCorner.X, UpperLeftCorner.Y, 2.0, 2.0, RGB(.5, .5, .5));
-//		}
-//	}
-//}
-//
-
-
-//void DrawSnake(game_state *GameState, game_offscreen_buffer *Buffer)
-//{
-//	snake *Snake = GameState->CurrentRound.Snake;
-//	game_map *GameMap = GameState->GameMap;
-//	std::list<snake_segment> Segments = Snake->Segments;
-//
-//	// Iterate through the segmeents in reverse order
-//	for (std::list<snake_segment>::reverse_iterator it = Segments.rbegin(); it != Segments.rend(); it++)
-//	{
-//		vec2 DrawLocation = it->Location + it->Direction * Snake->Timer;
-//		
-//		rectangle Rec = Buffer->MapToDisplayRectangle(DrawLocation.X, DrawLocation.Y, 1, 1, GameState->GameMap);
-//		Buffer->DrawRectangle(Rec.x, Rec.y, Rec.Width, Rec.Height, it->Color);
-//	}
-//
-//}
-
-void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer)
-{
-	Buffer->ClearBuffer();
-	Buffer->DrawBorder(GameState);
-	Buffer->DrawMap(GameState);
-
-	// Draw the pellets.
-	for (std::list<pellet>::iterator it = GameState->CurrentRound.Pellets.begin(); it != GameState->CurrentRound.Pellets.end(); it++)
-	{
-		rectangle Rec = Buffer->MapToDisplayRectangle(it->Location.X, it->Location.Y, 1.0, 1.0, GameState->GameMap);
-		Buffer->DrawRectangle(Rec.x, Rec.y, Rec.Width, Rec.Height, it->Color);
-	}
-
-	Buffer->DrawSnake(GameState);
 }
 
 

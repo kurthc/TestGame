@@ -1,5 +1,5 @@
 #include "Global.h"
-#include "win32_handmade.h"
+#include "WindowsLayer.h"
 
 
 static win32_window_dimension Win32GetWindowDimension(HWND Window)
@@ -71,7 +71,7 @@ static LRESULT CALLBACK Win32MainWindowCallback(HWND Window, UINT Message, WPARA
 
         case WM_ACTIVATEAPP:
         {
-            OutputDebugStringA("WM_ACTIVATEAPP\n");
+            //OutputDebugStringA("WM_ACTIVATEAPP\n");
         } break;
 
         case WM_DESTROY:
@@ -234,7 +234,7 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 				// Handle Windows messages, process the game, and render the buffer.
 				Win32HandleMessages();
 				GameStateProcess(GameState, &KeysDown, GameBuffer);
-				RenderBuffer(GameState, GameBuffer);
+				GameBuffer->RenderBuffer(GameState);
 
 				// Do something with sleep here?
 				CurrentTime = GetSeconds();

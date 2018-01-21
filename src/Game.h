@@ -119,6 +119,7 @@ public:
 	void DrawBorder(game_state *GameState);
 	void DrawSnake(game_state *GameState);
 	void DrawMap(game_state *GameState);
+	void RenderBuffer(game_state *GameState);
 };
 
 
@@ -127,4 +128,4 @@ public:
 void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen_buffer *Buffer);
 void ProcessSnake(game_state *GameState, snake *Snake);
 void ProcessTimers(game_state *GameState);
-void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer);
+//void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer);
