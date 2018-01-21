@@ -77,6 +77,7 @@ public:
 
 	snake_segment(vec2 Location, vec2 Direction, snake* Snake);
 	vec2 RealLocation();
+	rectangle HitRectangle();
 };
 
 class snake

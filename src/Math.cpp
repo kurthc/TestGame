@@ -27,7 +27,7 @@ vec2 operator+(vec2 v1, vec2 v2)
 	return Result;
 }
 
-vec2 & operator+=(vec2 &v1, vec2 v2)
+vec2& operator+=(vec2 &v1, vec2 v2)
 {
 	v1 = v1 + v2;
 	return v1;
@@ -49,7 +49,7 @@ vec2 operator-(vec2 v1, vec2 v2)
 	return Result;
 }
 
-vec2 & operator-=(vec2 &v1, vec2 v2)
+vec2& operator-=(vec2 &v1, vec2 v2)
 {
 	v1 = v1 - v2;
 	return v1;
@@ -70,3 +70,5 @@ vec2 operator*(vec2 v, float a)
 	Result.Y = a*v.Y;
 	return Result;
 }
+
+

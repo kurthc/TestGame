@@ -9,3 +9,23 @@ int RGB(float Red, float Green, float Blue)
 	int Output = (int)iBlue + (iGreen << 8) + (iRed << 16);
 	return Output;
 }
+
+bool DoRectanglesIntersect(rectangle R1, rectangle R2)
+{
+	float R1x1 = R1.x;
+	float R1y1 = R1.y;
+	float R1x2 = R1.x + R1.Width;
+	float R1y2 = R1.y + R1.Height;
+
+	float R2x1 = R2.x;
+	float R2y1 = R2.y;
+	float R2x2 = R2.x + R2.Width;
+	float R2y2 = R2.y + R2.Height;
+
+	return (
+		((R1x1 <= R2x1 && R2x1 < R1x2) || (R1x1 < R2x2 && R2x2 <= R1x2))
+		&&
+		((R1y1 <= R2y1 && R2y1 < R1y2) || (R1y1 < R2y2 && R2y2 <= R1y2))
+	);
+
+}
