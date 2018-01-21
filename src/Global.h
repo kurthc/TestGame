@@ -18,12 +18,14 @@ static int GameWindowHeight = 720;
 static int TargetFPS = 30;
 static int CountsPerSecond;
 
-struct rectangle
+class rectangle
 {
+public:
 	float x;
 	float y;
 	float Width;
 	float Height;
+	rectangle(float, float, float, float);
 };
 
 struct intrectangle
@@ -45,3 +47,4 @@ struct keys_down
 
 
 int RGB(float Red, float Green, float Blue);
+bool DoRectanglesIntersect(rectangle R1, rectangle R2);

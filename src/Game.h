@@ -19,6 +19,7 @@ class pellet
 public:
 	vec2 Location;
 	int Color;
+	rectangle HitRectangle();
 };
 
 class game_map

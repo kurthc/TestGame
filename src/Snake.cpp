@@ -18,7 +18,11 @@ vec2 snake_segment::RealLocation()
 }
 
 
-rectangle HitRectangle();
+rectangle snake_segment::HitRectangle()
+{
+	vec2 RealLocation = this->RealLocation();
+	return {RealLocation.X, RealLocation.Y, 1.0f, 1.0f};
+}
 
 snake::snake(int Length, vec2 InitialPosition, vec2 InitialDirection)
 {

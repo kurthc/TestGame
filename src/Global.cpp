@@ -10,6 +10,14 @@ int RGB(float Red, float Green, float Blue)
 	return Output;
 }
 
+rectangle::rectangle(float x, float y, float Width, float Height)
+{
+	this->x = x;
+	this->y = y;
+	this->Width = Width;
+	this->Height = Height;
+}
+
 bool DoRectanglesIntersect(rectangle R1, rectangle R2)
 {
 	float R1x1 = R1.x;
