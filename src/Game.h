@@ -114,8 +114,11 @@ public:
 	void DrawRectangle(int X, int Y, int Width, int Height, int32_t Color);
 	void DrawRectangle(float Left, float Top, float Width, float Height, int32_t Color);
 	void DrawRectangle(intrectangle Rect, int32_t Color);
+	vec2 MapToDisplayCoordinates(float x, float y, game_map *GameMap);
+	rectangle MapToDisplayRectangle(float x, float y, float Width, float Height, game_map *GameMap);
 	void DrawBorder(game_state *GameState);
 	void DrawSnake(game_state *GameState);
+	void DrawMap(game_state *GameState);
 };
 
 
@@ -125,5 +128,3 @@ void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen
 void ProcessSnake(game_state *GameState, snake *Snake);
 void ProcessTimers(game_state *GameState);
 void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer);
-//intrectangle ConvertMapTileToDisplayRectangle(intrectangle r, int MaxX, int MaxY, int x, int y);
-//intrectangle ConvertMapTileToDisplayRectangle(int Left, int Top, int Width, int Height, int MaxX, int MaxY, int x, int y);

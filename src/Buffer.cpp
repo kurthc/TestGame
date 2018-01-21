@@ -22,6 +22,8 @@ void game_offscreen_buffer::ClearBuffer()
 	}
 }
 
+
+
 void game_offscreen_buffer::DrawRectangle(int Left, int Top, int Width, int Height, int32_t Color)
 {
 	int32_t* Pixel = (int32_t*)this->Memory;
@@ -62,6 +64,29 @@ void game_offscreen_buffer::DrawRectangle(intrectangle Rect, int32_t Color)
 //	}
 //}
 
+//Map Coordinates go from:      0 to GameState->GameMap->Width
+//                    and:      0 to GameState->GameMap->Height
+//Display Coordinates go from:  Buffer->MapRegionInUse.x to Buffer->MapRegionInUse.x + Buffer->MapRegionInUse.Width
+//                        and:  Buffer->MapRegionInUse.y to Buffer->MapRegionInUse.y + Buffer->MapRegionInUse.Height
+
+vec2 game_offscreen_buffer::MapToDisplayCoordinates(float x, float y, game_map *GameMap)
+{
+	float NewX = x / GameMap->Width * this->MapRegionInUse.Width + this->MapRegionInUse.x;
+	float NewY = y / GameMap->Height * this->MapRegionInUse.Height + this->MapRegionInUse.y;
+	return vec2(NewX, NewY);
+}
+
+rectangle game_offscreen_buffer::MapToDisplayRectangle(float x, float y, float Width, float Height, game_map *GameMap)
+{
+	float Right = x + Width;
+	float Bottom = y + Height;
+	vec2 NewV1 = this->MapToDisplayCoordinates(x, y, GameMap);
+	vec2 NewV2 = this->MapToDisplayCoordinates(Right, Bottom, GameMap);
+	rectangle output = { NewV1.X, NewV1.Y, NewV2.X - NewV1.X, NewV2.Y - NewV1.Y };
+	return output;
+}
+
+
 
 void game_offscreen_buffer::DrawBorder(game_state *GameState)
 {
@@ -81,3 +106,32 @@ void game_offscreen_buffer::DrawBorder(game_state *GameState)
 }
 
 
+void game_offscreen_buffer::DrawSnake(game_state *GameState)
+{
+	snake *Snake = GameState->CurrentRound.Snake;
+	game_map *GameMap = GameState->GameMap;
+	std::list<snake_segment> Segments = Snake->Segments;
+
+	// Iterate through the segmeents in reverse order
+	for (std::list<snake_segment>::reverse_iterator it = Segments.rbegin(); it != Segments.rend(); it++)
+	{
+		vec2 DrawLocation = it->Location + it->Direction * Snake->Timer;
+
+		rectangle Rec = this->MapToDisplayRectangle(DrawLocation.X, DrawLocation.Y, 1, 1, GameState->GameMap);
+		this->DrawRectangle(Rec.x, Rec.y, Rec.Width, Rec.Height, it->Color);
+	}
+
+}
+
+void game_offscreen_buffer::DrawMap(game_state *GameState)
+{
+	game_map *GameMap = GameState->GameMap;
+	for (int y = 0; y < GameMap->Height; y++)
+	{
+		for (int x = 0; x < GameMap->Width; x++)
+		{
+			vec2 UpperLeftCorner = this->MapToDisplayCoordinates((float)x, (float)y, GameState->GameMap);
+			this->DrawRectangle(UpperLeftCorner.X, UpperLeftCorner.Y, 2.0, 2.0, RGB(.5, .5, .5));
+		}
+	}
+}
