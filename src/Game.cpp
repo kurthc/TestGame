@@ -114,9 +114,14 @@ void ProcessSnake(game_state* GameState, snake *Snake)
 
 	for (std::list<snake_segment>::iterator it = Segments->begin(); it != Segments->end(); it++)
 	{
+		int c = 0;
+		++c;
+
+		//if (c > 1 && it != Segments->begin() && it->IntangibleTimer == 0)
 		if (it != Segments->begin() && it->IntangibleTimer == 0)
 		{
-			//if (DoRectanglesIntersect(SnakeHead->HitRectangle(), it->HitRectangle()))
+			//if (DoRectanglesIntersect(SnakeHead->HitRectangle(), it->HitRectangle(), .00))
+			//if (DoRectanglesIntersect(SnakeHead->HitRectangle(), it->HitRectangle(), .01))
 			if (abs(HeadLocation.X - it->Location.X) < .9 && abs(HeadLocation.Y - it->Location.Y) < .9)
 			{
 				GameState->IsGameOver = true;
@@ -128,7 +133,7 @@ void ProcessSnake(game_state* GameState, snake *Snake)
 	std::list<pellet>::iterator it = GameState->CurrentRound.Pellets.begin();
 	while (it != GameState->CurrentRound.Pellets.end())
 	{
-		if (DoRectanglesIntersect(it->HitRectangle(), GameState->CurrentRound.Snake->Head->HitRectangle()))
+		if (DoRectanglesIntersect(it->HitRectangle(), GameState->CurrentRound.Snake->Head->HitRectangle(), .00))
 		{
 			// Snake head is on a pellet. Clear the pellet. (This works because the parameters are
 			// evaluated before the function call.)

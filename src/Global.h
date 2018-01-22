@@ -47,4 +47,4 @@ struct keys_down
 
 
 int RGB(float Red, float Green, float Blue);
-bool DoRectanglesIntersect(rectangle R1, rectangle R2);
+bool DoRectanglesIntersect(rectangle R1, rectangle R2, float Precision);

@@ -18,7 +18,8 @@ rectangle::rectangle(float x, float y, float Width, float Height)
 	this->Height = Height;
 }
 
-bool DoRectanglesIntersect(rectangle R1, rectangle R2)
+// TODO: Fix this method. It doesn't work.
+bool DoRectanglesIntersect(rectangle R1, rectangle R2, float Precision)
 {
 	float R1x1 = R1.x;
 	float R1y1 = R1.y;
@@ -31,9 +32,9 @@ bool DoRectanglesIntersect(rectangle R1, rectangle R2)
 	float R2y2 = R2.y + R2.Height;
 
 	return (
-		((R1x1 <= R2x1 && R2x1 < R1x2) || (R1x1 < R2x2 && R2x2 <= R1x2))
+		((R1x1 + Precision <= R2x1 && R2x1 < R1x2 - Precision) || (R1x1 + Precision < R2x2 && R2x2 <= R1x2 - Precision))
 		&&
-		((R1y1 <= R2y1 && R2y1 < R1y2) || (R1y1 < R2y2 && R2y2 <= R1y2))
+		((R1y1 + Precision <= R2y1 && R2y1 < R1y2 - Precision) || (R1y1 + Precision < R2y2 && R2y2 <= R1y2 - Precision))
 	);
 
 }
