@@ -19,6 +19,16 @@ void vec2::SetXY(float x, float y)
 	this->Y = y;
 }
 
+bool vec2::operator==(const vec2& v) const
+{
+	return (v.X == this->X && v.Y == this->Y);
+}
+
+//bool operator==(const vec2& v1, const vec2& v2)
+//{
+//	return (v1.X == v2.X && v1.Y == v2.Y);
+//}
+
 vec2 operator+(vec2 v1, vec2 v2)
 {
 	vec2 Result;

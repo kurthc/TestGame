@@ -166,30 +166,25 @@ void game_state::ProcessInput(keys_down *KeysDown)
 		{
 			NewDirection = -UnitVectorX;
 			DirectionChanged = true;
-			//GameState->Snake->SetDirection(-UnitVectorX);
 		}
 		if (KeysDown->Right)
 		{
 			NewDirection = UnitVectorX;
 			DirectionChanged = true;
-			//GameState->Snake->SetDirection(UnitVectorX);
 		}
 		if (KeysDown->Up)
 		{
 			NewDirection = -UnitVectorY;
 			DirectionChanged = true;
-			//GameState->Snake->SetDirection(-UnitVectorY);
 		}
 		if (KeysDown->Down)
 		{
 			NewDirection = UnitVectorY;
 			DirectionChanged = true;
-			//GameState->Snake->SetDirection(UnitVectorY);
 		}
 		if (KeysDown->Space)
 		{
 			bool Dummy = false;
-			//GameState->Snake.AddSegments(1);
 		}
 
 		if (DirectionChanged)
