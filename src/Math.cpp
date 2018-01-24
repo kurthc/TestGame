@@ -24,12 +24,8 @@ bool vec2::operator==(const vec2& v) const
 	return (v.X == this->X && v.Y == this->Y);
 }
 
-//bool operator==(const vec2& v1, const vec2& v2)
-//{
-//	return (v1.X == v2.X && v1.Y == v2.Y);
-//}
-
-vec2 operator+(vec2 v1, vec2 v2)
+//TODO: Make the rest of these const vec2&
+vec2 operator+(const vec2& v1, const vec2& v2)
 {
 	vec2 Result;
 	Result.X = v1.X + v2.X;
@@ -81,4 +77,8 @@ vec2 operator*(vec2 v, float a)
 	return Result;
 }
 
+float operator*(const vec2& v1, const vec2& v2)
+{
+	return v1.X * v2.X + v1.Y * v2.Y;
+}
 

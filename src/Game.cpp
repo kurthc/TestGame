@@ -114,15 +114,14 @@ void ProcessSnake(game_state* GameState, snake *Snake)
 
 	for (std::list<snake_segment>::iterator it = Segments->begin(); it != Segments->end(); it++)
 	{
-		int c = 0;
-		++c;
-
+		//int c = 0;
+		//++c;
 		//if (c > 1 && it != Segments->begin() && it->IntangibleTimer == 0)
 		if (it != Segments->begin() && it->IntangibleTimer == 0)
 		{
 			//if (DoRectanglesIntersect(SnakeHead->HitRectangle(), it->HitRectangle(), .00))
 			//if (DoRectanglesIntersect(SnakeHead->HitRectangle(), it->HitRectangle(), .01))
-			if (abs(HeadLocation.X - it->Location.X) < .9 && abs(HeadLocation.Y - it->Location.Y) < .9)
+			if (abs(HeadLocation.X - it->Location.X) < .99 && abs(HeadLocation.Y - it->Location.Y) < .99)
 			{
 				GameState->IsGameOver = true;
 			}
@@ -151,7 +150,7 @@ void ProcessSnake(game_state* GameState, snake *Snake)
 
 rectangle pellet::HitRectangle()
 {
-	return {(float)this->Location.X, (float)this->Location.Y, 1.0f, 1.0f};
+	return {this->Location.X, this->Location.Y, 1.0f, 1.0f};
 }
 
 //void ProcessInput(game_state *GameState, keys_down *KeysDown)
@@ -161,6 +160,8 @@ void game_state::ProcessInput(keys_down *KeysDown)
 	{
 		vec2 NewDirection;
 		bool DirectionChanged = false;
+
+		snake& Snake = *(this->CurrentRound.Snake);
 
 		if (KeysDown->Left)
 		{
@@ -187,16 +188,17 @@ void game_state::ProcessInput(keys_down *KeysDown)
 			bool Dummy = false;
 		}
 
-		if (DirectionChanged)
+		// Don't allow the direction to change if you're pressing the same direction the snake is already going
+		// or in the opposite direction.
+		if (DirectionChanged && (abs(Snake.Direction * NewDirection) <= 0.0005f))
 		{
 			this->CurrentRound.Snake->SetDirection(NewDirection);
 		}
 	}
-	else
+	else  // If in game over state
 	{
 		if (KeysDown->Space)
 		{
-			//game_round_state NewRound = game_round_state(this);
 			this->CurrentRound = game_round_state();
 			this->CurrentRound.GameState = this;
 			this->IsGameOver = false;

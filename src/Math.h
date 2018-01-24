@@ -15,14 +15,14 @@ public:
 };
 
 
-vec2 operator+(vec2 v1, vec2 v2);
+vec2 operator+(const vec2& v1, const vec2& v2);
 vec2 & operator+=(vec2 &v1, vec2 v2);
 vec2 operator-(vec2 v);
 vec2 operator-(vec2 v1, vec2 v2);
 vec2 & operator-=(vec2 &v1, vec2 v2);
 vec2 operator*(float a, vec2 v);
 vec2 operator*(vec2 v, float a);
-
+float operator*(const vec2& v1, const vec2& v2);
 
 
 
