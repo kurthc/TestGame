@@ -36,6 +36,7 @@ class game_round_state
 {
 public:
 	snake* Snake;
+	int Score;
 
 	float NewPelletTimer;
 	std::list<pellet> Pellets;
@@ -121,6 +122,7 @@ public:
 	void DrawBorder(game_state *GameState);
 	void DrawSnake(game_state *GameState);
 	void DrawMap(game_state *GameState);
+	void DrawScore(game_state *GameState);
 	void RenderBuffer(game_state *GameState);
 };
 

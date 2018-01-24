@@ -6,7 +6,7 @@ game_offscreen_buffer::game_offscreen_buffer(int TotalWidth, int TotalHeight)
 	this->TotalHeight = TotalHeight;
 	this->MapBorderThickness = 5;
 	this->MapBorderColor = RGB(1.0, 0.0, 1.0);
-	this->MapRegionTotal.x = 50;
+	this->MapRegionTotal.x = 200;
 	this->MapRegionTotal.y = 50;
 	this->MapRegionTotal.Width = TotalWidth - 100;
 	this->MapRegionTotal.Height = TotalHeight - 100;
@@ -136,11 +136,20 @@ void game_offscreen_buffer::DrawMap(game_state *GameState)
 	}
 }
 
+void game_offscreen_buffer::DrawScore(game_state *GameState)
+{
+	for (int i = 0; i < GameState->CurrentRound.Score; ++i)
+	{
+		this->DrawRectangle(10 + 20*i, 10, 10, 10, RGB(1, 1, 1));
+	}
+}
+
 void game_offscreen_buffer::RenderBuffer(game_state *GameState)
 {
 	this->ClearBuffer();
 	this->DrawBorder(GameState);
 	this->DrawMap(GameState);
+	this->DrawScore(GameState);
 
 	// Draw the pellets.
 	for (std::list<pellet>::iterator it = GameState->CurrentRound.Pellets.begin(); it != GameState->CurrentRound.Pellets.end(); it++)
