@@ -33,6 +33,7 @@ game_round_state::game_round_state()
 	this->Snake = new snake(5, InitialPosition, InitialDirection);
 
 	this->NewPelletTimer = 3;
+	this->Score = 0;
 	
 }
 
@@ -139,6 +140,7 @@ void ProcessSnake(game_state* GameState, snake *Snake)
 			GameState->CurrentRound.Pellets.erase(it++);
 			GameState->CurrentRound.Snake->AddSegments(3);
 			std::cout << "Ate a pellet!" << std::endl;
+			GameState->CurrentRound.Score += 1;
 		}
 		else
 		{

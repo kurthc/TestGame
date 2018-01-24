@@ -2,6 +2,15 @@
 
 #include <stdint.h>
 
+/*
+TODOs
+
+Fix DoRectanglesInterect()
+Score
+
+
+*/
+
 //template <typename T> inline T const& MAX(T const& X, T const& Y)
 template <typename T> inline T const& MAX(T const& X, T const& Y)
 {
