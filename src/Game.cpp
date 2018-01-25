@@ -72,23 +72,20 @@ void game_state::GameStateProcess(keys_down *KeysDown, game_offscreen_buffer *Ga
 // Update the snake's location.
 void game_state::ProcessSnake(snake *Snake)
 {
-	std::list<snake_segment> *Segments = &(Snake->Segments);
+	//std::list<snake_segment> *Segments = &(Snake->Segments);
+	std::list<snake_segment>& Segments = Snake->Segments;
 
 	// The timer counts up to 1. When it gets there, move the snake.
 	Snake->Timer += Snake->Speed / 30.0f;   // FPS?
 	if (Snake->Timer >= 1)
 	{
 		vec2 LastLocation = {0, 0};
-		for (std::list<snake_segment>::iterator it = Segments->begin(); it != Segments->end(); ++it)
+		for (std::list<snake_segment>::iterator it = Segments.begin(); it != Segments.end(); ++it)
 		{
+			// Update the location and direction of each segment.
+			// Set the new direction from the
 			it->Location += it->Direction;    //TODO: Throw in a round-to-integer here.
-			//if (it->IntangibleTimer > 0)     // The segment doesn't get hit-checked if it is intangible.
-			//{
-			//	it->IntangibleTimer -= Snake->Speed / 30.0f;
-			//	if (it->IntangibleTimer < 0.0f)
-			//		it->IntangibleTimer = 0.0f;
-			//}
-			if (it == Segments->begin())
+			if (it == Segments.begin())
 			{
 				it->Direction = Snake->Direction;
 			}
@@ -102,21 +99,20 @@ void game_state::ProcessSnake(snake *Snake)
 	}
 
 
-	snake_segment *SnakeHead = Snake->Head;
-	vec2 HeadLocation = SnakeHead->RealLocation();
+	//snake_segment *SnakeHead = Snake->Head;
+	snake_segment& SnakeHead = Snake->Segments.front();
+	vec2 HeadLocation = SnakeHead.RealLocation();
 
+	// Check if the snake ran into the game border.
 	if (HeadLocation.X < 0 || HeadLocation.Y < 0 || HeadLocation.X > this->GameMap->Width-1 || HeadLocation.Y > this->GameMap->Height-1)
 	{
 		this->IsGameOver = true;
 	}
 
-
-	for (std::list<snake_segment>::iterator it = Segments->begin(); it != Segments->end(); it++)
+	// Check if the snake ran into one of its segments.
+	for (std::list<snake_segment>::iterator it = Segments.begin(); it != Segments.end(); ++it)
 	{
-		//int c = 0;
-		//++c;
-		//if (c > 1 && it != Segments->begin() && it->IntangibleTimer == 0)
-		if (it != Segments->begin() && it->IntangibleTimer == 0)
+		if (it != Segments.begin() && it->IntangibleTimer == 0)
 		{
 			//if (DoRectanglesIntersect(SnakeHead->HitRectangle(), it->HitRectangle(), .00))
 			//if (DoRectanglesIntersect(SnakeHead->HitRectangle(), it->HitRectangle(), .01))
@@ -128,21 +124,22 @@ void game_state::ProcessSnake(snake *Snake)
 	}
 	
 	// Check if the snake hit a pellet.
-	std::list<pellet>::iterator it = this->CurrentRound.Pellets.begin();
-	while (it != this->CurrentRound.Pellets.end())
+	game_round_state& CurrentRound = this->CurrentRound;
+	std::list<pellet>::iterator pit = this->CurrentRound.Pellets.begin();
+	while (pit != this->CurrentRound.Pellets.end())
 	{
-		if (DoRectanglesIntersect(it->HitRectangle(), this->CurrentRound.Snake->Head->HitRectangle(), .00))
+		if (DoRectanglesIntersect(pit->HitRectangle(), SnakeHead.HitRectangle(), .00))
 		{
 			// Snake head is on a pellet. Clear the pellet. (This works because the parameters are
 			// evaluated before the function call.)
-			this->CurrentRound.Pellets.erase(it++);
-			this->CurrentRound.Snake->AddSegments(3);
+			this->CurrentRound.Pellets.erase(pit++);
+			Snake->AddSegments(3);
 			std::cout << "Ate a pellet!" << std::endl;
 			this->CurrentRound.Score += 1;
 		}
 		else
 		{
-			it++;
+			pit++;
 		}
 	}
 }

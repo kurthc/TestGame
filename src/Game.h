@@ -96,7 +96,6 @@ public:
 	float Speed;
 	float Timer;      // The timer counts up to 1. When it gets there, move the snake.
 	vec2 Direction;
-	snake_segment* Head;
 
 	snake(int Length, vec2 InitialPosition, vec2 InitialDirection);
 	void snake::SetDirection(float x, float y);
