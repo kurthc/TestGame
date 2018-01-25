@@ -117,8 +117,12 @@ void game_offscreen_buffer::DrawSnake(game_state *GameState)
 	{
 		vec2 DrawLocation = it->Location + it->Direction * Snake->Timer;
 
+		// For debugging the Intangibility timer.
+		int Color = it->Color;
+		if (it->IntangibleTimer > 0) Color = RGB(1, 1, 0);
+		
 		rectangle Rec = this->MapToDisplayRectangle(DrawLocation.X, DrawLocation.Y, 1, 1, GameState->GameMap);
-		this->DrawRectangle(Rec.x, Rec.y, Rec.Width, Rec.Height, it->Color);
+		this->DrawRectangle(Rec.x, Rec.y, Rec.Width, Rec.Height, Color);
 	}
 
 }

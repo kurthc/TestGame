@@ -79,15 +79,15 @@ void game_state::ProcessSnake(snake *Snake)
 	if (Snake->Timer >= 1)
 	{
 		vec2 LastLocation = {0, 0};
-		for (std::list<snake_segment>::iterator it = Segments->begin(); it != Segments->end(); it++)
+		for (std::list<snake_segment>::iterator it = Segments->begin(); it != Segments->end(); ++it)
 		{
-			it->Location = it->Location + it->Direction;    //TODO: Throw in a round-to-integer here.
-			if (it->IntangibleTimer > 0)
-			{
-				it->IntangibleTimer -= Snake->Speed / 30.0f;
-				if (it->IntangibleTimer < 0.0f)
-					it->IntangibleTimer = 0.0f;
-			}
+			it->Location += it->Direction;    //TODO: Throw in a round-to-integer here.
+			//if (it->IntangibleTimer > 0)     // The segment doesn't get hit-checked if it is intangible.
+			//{
+			//	it->IntangibleTimer -= Snake->Speed / 30.0f;
+			//	if (it->IntangibleTimer < 0.0f)
+			//		it->IntangibleTimer = 0.0f;
+			//}
 			if (it == Segments->begin())
 			{
 				it->Direction = Snake->Direction;
@@ -216,6 +216,18 @@ void game_state::ProcessTimers()
 	{
 		this->CurrentRound.AddPellet();
 		this->CurrentRound.NewPelletTimer = 10.0f;
+	}
+
+	snake* Snake = this->CurrentRound.Snake;
+	std::list<snake_segment>& Segments = this->CurrentRound.Snake->Segments;
+	for (std::list<snake_segment>::iterator it = Segments.begin(); it != Segments.end(); ++it)
+	{
+		if (it->IntangibleTimer > 0)     // The segment doesn't get hit-checked if it is intangible.
+		{
+			it->IntangibleTimer -= Snake->Speed / 30.0f;
+			if (it->IntangibleTimer < 0.0f)
+				it->IntangibleTimer = 0.0f;
+		}
 	}
 }
 
