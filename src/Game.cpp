@@ -62,12 +62,10 @@ void game_state::GameStateProcess(keys_down *KeysDown, game_offscreen_buffer *Ga
 	}
 	else
 	{
-		//ProcessInput(GameState, KeysDown);
-		this->ProcessTimers();   // Currently just adds pellets
-		this->ProcessSnake(this->CurrentRound.Snake);    // Move the snake, check for collisions.
+		this->ProcessTimers(); 
+		this->ProcessSnake(this->CurrentRound.Snake);
 	}
 }
-
 
 
 // Update the snake's location.
@@ -126,21 +124,21 @@ void game_state::ProcessSnake(snake *Snake)
 	
 	// Check if the snake hit a pellet.
 	game_round_state& CurrentRound = this->CurrentRound;
-	std::list<pellet>::iterator pit = this->CurrentRound.Pellets.begin();
-	while (pit != this->CurrentRound.Pellets.end())
+	std::list<pellet>::iterator PelletIt = CurrentRound.Pellets.begin();
+	while (PelletIt != this->CurrentRound.Pellets.end())
 	{
-		if (DoRectanglesIntersect(pit->HitRectangle(), SnakeHead.HitRectangle(), .00))
+		if (DoRectanglesIntersect(PelletIt->HitRectangle(), SnakeHead.HitRectangle(), .00))
 		{
 			// Snake head is on a pellet. Clear the pellet. (This works because the parameters are
 			// evaluated before the function call.)
-			this->CurrentRound.Pellets.erase(pit++);
-			Snake->AddSegments(3);
+			CurrentRound.Pellets.erase(PelletIt++);
+			Snake->AddSegments(SEGMENTS_TO_ADD_ON_EAT_PELLET);
 			std::cout << "Ate a pellet!" << std::endl;
-			this->CurrentRound.Score += 1;
+			CurrentRound.Score += 1;
 		}
 		else
 		{
-			pit++;
+			PelletIt++;
 		}
 	}
 }
@@ -151,7 +149,6 @@ rectangle pellet::HitRectangle()
 	return {this->Location.X, this->Location.Y, 1.0f, 1.0f};
 }
 
-//void ProcessInput(game_state *GameState, keys_down *KeysDown)
 void game_state::ProcessInput(keys_down *KeysDown)
 {
 	if (!this->IsGameOver)
@@ -194,6 +191,9 @@ void game_state::ProcessInput(keys_down *KeysDown)
 
 			this->CurrentRound.Snake->SetDirection(NewDirection);
 		}
+
+
+
 	}
 	else  // If in game over state
 	{

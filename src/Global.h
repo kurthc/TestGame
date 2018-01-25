@@ -6,10 +6,11 @@
 TODOs
 
 Fix DoRectanglesInterect()
-Score
 
 
 */
+
+constexpr int SEGMENTS_TO_ADD_ON_EAT_PELLET = 3;
 
 //template <typename T> inline T const& MAX(T const& X, T const& Y)
 template <typename T> inline T const& MAX(T const& X, T const& Y)

@@ -108,9 +108,9 @@ void game_offscreen_buffer::DrawBorder(game_state *GameState)
 
 void game_offscreen_buffer::DrawSnake(game_state *GameState)
 {
-	snake *Snake = GameState->CurrentRound.Snake;
-	game_map *GameMap = GameState->GameMap;
-	std::list<snake_segment> Segments = Snake->Segments;
+	snake* Snake = GameState->CurrentRound.Snake;
+	game_map* GameMap = GameState->GameMap;
+	std::list<snake_segment>& Segments = Snake->Segments;
 
 	// Iterate through the segmeents in reverse order
 	for (std::list<snake_segment>::reverse_iterator it = Segments.rbegin(); it != Segments.rend(); it++)
