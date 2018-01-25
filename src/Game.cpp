@@ -7,15 +7,17 @@ game_state::game_state(game_offscreen_buffer* Buffer)
 
 	this->IsGameOver = false;
 
-	//this->KeysDown = KeysDown;
-	
 	this->GameMap = new game_map(20, 15);      // Create the game map.
-
 
 	Buffer->MapRegionInUse.x = Buffer->MapRegionTotal.x;
 	Buffer->MapRegionInUse.y = Buffer->MapRegionTotal.y;
-	Buffer->MapRegionInUse.Height = Buffer->MapRegionTotal.Height;
-	Buffer->MapRegionInUse.Width = (int)((float)Buffer->MapRegionTotal.Height / this->GameMap->Height * this->GameMap->Width);
+
+	// Scale the GameMap dimensions by the largest factor that will allow it to fit in MapRegionTotal.
+	float MaxWidthScalingFactor = Buffer->MapRegionTotal.Width / this->GameMap->Width;
+	float MaxHeightScalingFactor = Buffer->MapRegionTotal.Height / this->GameMap->Height;
+	float ScalingFactor = MIN(MaxWidthScalingFactor, MaxHeightScalingFactor);
+	Buffer->MapRegionInUse.Width = ScalingFactor * this->GameMap->Width;
+	Buffer->MapRegionInUse.Height = ScalingFactor * this->GameMap->Height;
 
 }
 
@@ -39,7 +41,6 @@ game_round_state::game_round_state()
 
 game_map::game_map(int Width, int Height)
 {
-	//game_map *GameMap = new game_map();
 	this->Width = Width;
 	this->Height = Height;
 	this->Bytes = new uint8_t[Width * Height];
@@ -48,8 +49,6 @@ game_map::game_map(int Width, int Height)
 		*((uint8_t *)(this->Bytes) + i) = 0;
 	}
 }
-
-
 
 
 void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen_buffer *GameBuffer)
