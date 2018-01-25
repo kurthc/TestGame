@@ -32,10 +32,6 @@ snake::snake(int Length, vec2 InitialPosition, vec2 InitialDirection)
 
 	snake_segment* ssHead = new snake_segment(InitialPosition, InitialDirection, this);
 	this->Segments.push_back(*ssHead);
-	
-	//Question: Why doesn't it work to set this->Head to ssHead? Is push_back() putting a copy of ssHead in the list?
-	//Answer: Because it's a list of values, not pointers. Change to list<snake_segment*> ?
-	this->Head = &(this->Segments.front());
 
 	this->AddSegments(Length - 1);
 

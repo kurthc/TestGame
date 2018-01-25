@@ -19,6 +19,11 @@ class pellet
 public:
 	vec2 Location;
 	int Color;
+	~pellet()
+	{
+		// Just making sure these get destroyed.
+		//std::cout << "pellet destroyed" << std::endl;
+	}
 	rectangle HitRectangle();
 };
 
@@ -55,15 +60,16 @@ public:
 	
 	bool IsGameOver;
 
-	//rectangle GameboardDisplayRegion = { 50, 50, 600, 600 };
-		
-	game_map *GameMap;  //TODO: This doesn't need to be a pointer
+	game_map* GameMap;  //TODO: This doesn't need to be a pointer
 	
 	game_offscreen_buffer *Buffer;
 	keys_down *KeysDown;
 
 	game_state(game_offscreen_buffer* Buffer);
 	void ProcessInput(keys_down *KeysDown);
+	void ProcessSnake(snake *Snake);
+	void ProcessTimers();
+	void GameStateProcess(keys_down *KeysDown, game_offscreen_buffer *Buffer);
 };
 
 
@@ -90,7 +96,6 @@ public:
 	float Speed;
 	float Timer;      // The timer counts up to 1. When it gets there, move the snake.
 	vec2 Direction;
-	snake_segment* Head;
 
 	snake(int Length, vec2 InitialPosition, vec2 InitialDirection);
 	void snake::SetDirection(float x, float y);
@@ -129,7 +134,6 @@ public:
 
 
 
-void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen_buffer *Buffer);
-void ProcessSnake(game_state *GameState, snake *Snake);
-void ProcessTimers(game_state *GameState);
-//void RenderBuffer(game_state *GameState, game_offscreen_buffer *Buffer);
+//void GameStateProcess(game_state *GameState, keys_down *KeysDown, game_offscreen_buffer *Buffer);
+//void ProcessTimers(game_state *GameState);
+
