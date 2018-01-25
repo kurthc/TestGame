@@ -233,7 +233,7 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
             {
 				// Handle Windows messages, process the game, and render the buffer.
 				Win32HandleMessages();
-				GameStateProcess(GameState, &KeysDown, GameBuffer);
+				GameState->GameStateProcess(&KeysDown, GameBuffer);
 				GameBuffer->RenderBuffer(GameState);
 
 				// Do something with sleep here?
