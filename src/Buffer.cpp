@@ -155,6 +155,11 @@ void game_offscreen_buffer::RenderBuffer(game_state *GameState)
 	this->DrawMap(GameState);
 	this->DrawScore(GameState);
 
+	if (GameState->DebugBufferMode)
+	{
+		this->DrawDebugOverLay(GameState);
+	}
+
 	// Draw the pellets.
 	for (std::list<pellet>::iterator it = GameState->CurrentRound.Pellets.begin(); it != GameState->CurrentRound.Pellets.end(); it++)
 	{
@@ -163,4 +168,9 @@ void game_offscreen_buffer::RenderBuffer(game_state *GameState)
 	}
 
 	this->DrawSnake(GameState);
+}
+
+void game_offscreen_buffer::DrawDebugOverLay(game_state *GameState)
+{
+
 }

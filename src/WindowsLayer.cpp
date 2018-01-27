@@ -71,7 +71,8 @@ static LRESULT CALLBACK Win32MainWindowCallback(HWND Window, UINT Message, WPARA
 
         case WM_ACTIVATEAPP:
         {
-            //OutputDebugStringA("WM_ACTIVATEAPP\n");
+			// WParam == true if we're selecting this window, false if we're selecting a different window.
+			std::cout << "WM_ACTIVATEAPP " << WParam << "\n";
         } break;
 
         case WM_DESTROY:
@@ -102,6 +103,10 @@ static LRESULT CALLBACK Win32MainWindowCallback(HWND Window, UINT Message, WPARA
 			{
 				KeysDown.Space = 1;
 			}
+			else if (VKCode == '1')
+			{
+				KeysDown.One = 1;
+			}
 		} break;
 
 		case WM_KEYUP:
@@ -126,6 +131,10 @@ static LRESULT CALLBACK Win32MainWindowCallback(HWND Window, UINT Message, WPARA
 			else if (VKCode == VK_SPACE)
 			{
 				KeysDown.Space = 0;
+			}
+			else if (VKCode == '1')
+			{
+				KeysDown.One = 0;
 			}
 		} break;
 
@@ -246,8 +255,8 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 				//
 				// Update the window.
 				//
-                win32_window_dimension Dimension = Win32GetWindowDimension(Window);
-                Win32DisplayBufferInWindow(&GlobalBackBuffer, DeviceContext,
+                win32_window_dimension Dimension = Win32GetWindowDimension(Window);     // Calls GetClientRect() to get the client area.
+                Win32DisplayBufferInWindow(&GlobalBackBuffer, DeviceContext,            // Calls StretchDIBits()
                                            Dimension.Width, Dimension.Height);
 
 				LastFrameStart = GetSeconds();

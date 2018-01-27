@@ -205,7 +205,12 @@ void game_state::ProcessInput(keys_down *KeysDown)
 			this->CurrentRound.GameState = this;
 			this->IsGameOver = false;
 		}
+	}
 
+	if (KeysDown->One)
+	{
+		this->DebugBufferMode = !this->DebugBufferMode;
+		KeysDown->One = 0;
 	}
 }
 

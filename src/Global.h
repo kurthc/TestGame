@@ -5,6 +5,10 @@
 /*
 TODOs
 
+Set up rects for different parts of the screen
+Set up RenderDebugOverLay()
+Set up a part for text.
+
 Fix DoRectanglesInterect()
 
 
@@ -46,6 +50,7 @@ struct intrectangle
 	int Height;
 };
 
+// TODO: Why are these int?
 struct keys_down
 {
 	int Left;
@@ -53,6 +58,7 @@ struct keys_down
 	int Up;
 	int Down;
 	int Space;
+	int One;
 };
 
 
