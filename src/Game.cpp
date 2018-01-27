@@ -7,7 +7,7 @@ game_state::game_state(game_offscreen_buffer* Buffer)
 
 	this->IsGameOver = false;
 
-	this->GameMap = new game_map(20, 15);      // Create the game map.
+	this->GameMap = new game_map(40, 30);      // Create the game map.
 
 	Buffer->MapRegionInUse.x = Buffer->MapRegionTotal.x;
 	Buffer->MapRegionInUse.y = Buffer->MapRegionTotal.y;
@@ -135,6 +135,8 @@ void game_state::ProcessSnake(snake *Snake)
 			Snake->AddSegments(SEGMENTS_TO_ADD_ON_EAT_PELLET);
 			std::cout << "Ate a pellet!" << std::endl;
 			CurrentRound.Score += 1;
+			Snake->Speed += .15;
+			//Snake->Speed *= 1.1;
 		}
 		else
 		{
