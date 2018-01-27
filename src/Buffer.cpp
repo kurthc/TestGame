@@ -69,29 +69,28 @@ void game_offscreen_buffer::DrawRectangle(intrectangle Rect, int32_t Color)
 //Display Coordinates go from:  Buffer->MapRegionInUse.x to Buffer->MapRegionInUse.x + Buffer->MapRegionInUse.Width
 //                        and:  Buffer->MapRegionInUse.y to Buffer->MapRegionInUse.y + Buffer->MapRegionInUse.Height
 
-vec2 game_offscreen_buffer::MapToDisplayCoordinates(float x, float y, game_map *GameMap)
+vec2 game_offscreen_buffer::MapToDisplayCoordinates(float x, float y)
 {
+	game_map* GameMap = this->GameState->GameMap;
 	float NewX = x / GameMap->Width * this->MapRegionInUse.Width + this->MapRegionInUse.x;
 	float NewY = y / GameMap->Height * this->MapRegionInUse.Height + this->MapRegionInUse.y;
 	return vec2(NewX, NewY);
 }
 
-rectangle game_offscreen_buffer::MapToDisplayRectangle(float x, float y, float Width, float Height, game_map *GameMap)
+rectangle game_offscreen_buffer::MapToDisplayRectangle(float x, float y, float Width, float Height)
 {
 	float Right = x + Width;
 	float Bottom = y + Height;
-	vec2 NewV1 = this->MapToDisplayCoordinates(x, y, GameMap);
-	vec2 NewV2 = this->MapToDisplayCoordinates(Right, Bottom, GameMap);
+	vec2 NewV1 = this->MapToDisplayCoordinates(x, y);
+	vec2 NewV2 = this->MapToDisplayCoordinates(Right, Bottom);
 	rectangle output = { NewV1.X, NewV1.Y, NewV2.X - NewV1.X, NewV2.Y - NewV1.Y };
 	return output;
 }
 
 
 
-void game_offscreen_buffer::DrawBorder(game_state *GameState)
+void game_offscreen_buffer::DrawBorder()
 {
-	//game_offscreen_buffer *Buffer = GameState->Buffer;
-	//rectangle Inner = GameState->GameboardDisplayRegion;
 	intrectangle Inner = this->MapRegionInUse;
 	intrectangle Outer = {};
 	int BorderWidth = this->MapBorderThickness;
@@ -106,10 +105,10 @@ void game_offscreen_buffer::DrawBorder(game_state *GameState)
 }
 
 
-void game_offscreen_buffer::DrawSnake(game_state *GameState)
+void game_offscreen_buffer::DrawSnake()
 {
-	snake* Snake = GameState->CurrentRound.Snake;
-	game_map* GameMap = GameState->GameMap;
+	snake* Snake = this->GameState->CurrentRound.Snake;
+	game_map* GameMap = this->GameState->GameMap;
 	std::list<snake_segment>& Segments = Snake->Segments;
 
 	// Iterate through the segmeents in reverse order
@@ -121,26 +120,26 @@ void game_offscreen_buffer::DrawSnake(game_state *GameState)
 		int Color = it->Color;
 		if (it->IntangibleTimer > 0) Color = RGB(1, 1, 0);
 		
-		rectangle Rec = this->MapToDisplayRectangle(DrawLocation.X, DrawLocation.Y, 1, 1, GameState->GameMap);
+		rectangle Rec = this->MapToDisplayRectangle(DrawLocation.X, DrawLocation.Y, 1, 1);
 		this->DrawRectangle(Rec.x, Rec.y, Rec.Width, Rec.Height, Color);
 	}
 
 }
 
-void game_offscreen_buffer::DrawMap(game_state *GameState)
+void game_offscreen_buffer::DrawMap()
 {
-	game_map *GameMap = GameState->GameMap;
+	game_map *GameMap = this->GameState->GameMap;
 	for (int y = 0; y < GameMap->Height; y++)
 	{
 		for (int x = 0; x < GameMap->Width; x++)
 		{
-			vec2 UpperLeftCorner = this->MapToDisplayCoordinates((float)x, (float)y, GameState->GameMap);
+			vec2 UpperLeftCorner = this->MapToDisplayCoordinates((float)x, (float)y);
 			this->DrawRectangle(UpperLeftCorner.X, UpperLeftCorner.Y, 2.0, 2.0, RGB(.5, .5, .5));
 		}
 	}
 }
 
-void game_offscreen_buffer::DrawScore(game_state *GameState)
+void game_offscreen_buffer::DrawScore()
 {
 	for (int i = 0; i < GameState->CurrentRound.Score; ++i)
 	{
@@ -148,29 +147,29 @@ void game_offscreen_buffer::DrawScore(game_state *GameState)
 	}
 }
 
-void game_offscreen_buffer::RenderBuffer(game_state *GameState)
+void game_offscreen_buffer::RenderBuffer()
 {
 	this->ClearBuffer();
-	this->DrawBorder(GameState);
-	this->DrawMap(GameState);
-	this->DrawScore(GameState);
+	this->DrawBorder();
+	this->DrawMap();
+	this->DrawScore();
 
-	if (GameState->DebugBufferMode)
+	if (this->GameState->DebugBufferMode)
 	{
-		this->DrawDebugOverLay(GameState);
+		this->DrawDebugOverLay();
 	}
 
 	// Draw the pellets.
-	for (std::list<pellet>::iterator it = GameState->CurrentRound.Pellets.begin(); it != GameState->CurrentRound.Pellets.end(); it++)
+	for (std::list<pellet>::iterator it = this->GameState->CurrentRound.Pellets.begin(); it != this->GameState->CurrentRound.Pellets.end(); it++)
 	{
-		rectangle Rec = this->MapToDisplayRectangle(it->Location.X, it->Location.Y, 1.0, 1.0, GameState->GameMap);
+		rectangle Rec = this->MapToDisplayRectangle(it->Location.X, it->Location.Y, 1.0, 1.0);
 		this->DrawRectangle(Rec.x, Rec.y, Rec.Width, Rec.Height, it->Color);
 	}
 
-	this->DrawSnake(GameState);
+	this->DrawSnake();
 }
 
-void game_offscreen_buffer::DrawDebugOverLay(game_state *GameState)
+void game_offscreen_buffer::DrawDebugOverLay()
 {
 
 }

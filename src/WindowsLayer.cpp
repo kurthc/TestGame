@@ -47,15 +47,18 @@ Win32ResizeDIBSection(win32_offscreen_buffer *Buffer, int Width, int Height)
 
 static void Win32DisplayBufferInWindow(win32_offscreen_buffer *Buffer, HDC DeviceContext, int WindowWidth, int WindowHeight)
 {
-    StretchDIBits(DeviceContext, 0, 0, Buffer->Width, Buffer->Height,
+    // Note that WindowWidth and WindowHeight are leftover from when the window could stretch. Maybe we will re-enable this later.
+
+	//char *Something = "This is a test";
+	//RECT r = { 10, 10, 100, 100 };
+	//DrawText(DeviceContext, Something, -1, &r, DT_LEFT);
+
+	StretchDIBits(DeviceContext, 0, 0, Buffer->Width, Buffer->Height,
 			0, 0, Buffer->Width, Buffer->Height,
 			Buffer->Memory,
 			&Buffer->Info,
 			DIB_RGB_COLORS, SRCCOPY);
 
-	//char *Something = "This is a test";
-	//RECT r = { 10, 10, 100, 100 };
-	//DrawText(DeviceContext, Something, -1, &r, DT_LEFT);
 }
 
 static LRESULT CALLBACK Win32MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LPARAM LParam)
@@ -228,7 +231,8 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 			GameBuffer->Memory = GlobalBackBuffer.Memory;
 
 			game_state* GameState = new game_state(GameBuffer);
-			GameState->Buffer = GameBuffer;
+			//GameState->Buffer = GameBuffer;
+			GameBuffer->GameState = GameState;
 
 			GlobalRunning = true;
 			float LastFrameStart = GetSeconds();
@@ -243,7 +247,7 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 				// Handle Windows messages, process the game, and render the buffer.
 				Win32HandleMessages();
 				GameState->GameStateProcess(&KeysDown, GameBuffer);
-				GameBuffer->RenderBuffer(GameState);
+				GameBuffer->RenderBuffer();
 
 				// Do something with sleep here?
 				CurrentTime = GetSeconds();

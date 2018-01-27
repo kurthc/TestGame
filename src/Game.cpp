@@ -2,6 +2,7 @@
 
 game_state::game_state(game_offscreen_buffer* Buffer)
 {
+	this->Buffer = Buffer;
 	this->CurrentRound = game_round_state();
 	this->CurrentRound.GameState = this;		//Not sure why it's not working to set this in the game_round_state constructor.
 

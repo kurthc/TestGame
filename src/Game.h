@@ -43,6 +43,7 @@ class game_offscreen_buffer
 	// NOTE: Pixels are always 32-bits wide, Memory Order BB GG RR XX
 public:
 	void *Memory;
+	game_state* GameState;
 	int TotalWidth;
 	int TotalHeight;
 	intrectangle MapRegionTotal;		// The part of the game screen reserved for a game map.
@@ -55,16 +56,16 @@ public:
 	void DrawRectangle(int X, int Y, int Width, int Height, int32_t Color);
 	void DrawRectangle(float Left, float Top, float Width, float Height, int32_t Color);
 	void DrawRectangle(intrectangle Rect, int32_t Color);
-	vec2 MapToDisplayCoordinates(float x, float y, game_map *GameMap);
-	rectangle MapToDisplayRectangle(float x, float y, float Width, float Height, game_map *GameMap);
+	vec2 MapToDisplayCoordinates(float x, float y);
+	rectangle MapToDisplayRectangle(float x, float y, float Width, float Height);
 	
 	//TODO: Should we have a pointer to GameState in this object so I can remove all these parameters?
-	void DrawBorder(game_state *GameState);
-	void DrawSnake(game_state *GameState);
-	void DrawMap(game_state *GameState);
-	void DrawScore(game_state *GameState);
-	void RenderBuffer(game_state *GameState);
-	void DrawDebugOverLay(game_state *GameState);
+	void DrawBorder();
+	void DrawSnake();
+	void DrawMap();
+	void DrawScore();
+	void RenderBuffer();
+	void DrawDebugOverLay();
 };
 
 
@@ -89,10 +90,11 @@ public:
 class game_window_regions
 {
 public:
-	rectangle ActionRegion;
-	rectangle ScoreRegion;
+	intrectangle ActionRegion { 200, 50, 1280-400, 720-100 };
+	intrectangle ActionRegionInUse { 0, 0, 0, 0 };
+	intrectangle ScoreRegion{ 50, 50, 100, 720 - 100 };
 
-	game_window_regions() : ActionRegion{10,10,100,100}, ScoreRegion{10,10,20,20} { };
+	//game_window_regions();
 };
 
 class game_state
@@ -105,6 +107,7 @@ public:
 
 	game_map* GameMap;  //TODO: This doesn't need to be a pointer
 	
+	game_window_regions WindowRegions;
 	game_offscreen_buffer *Buffer;
 	keys_down *KeysDown;
 
