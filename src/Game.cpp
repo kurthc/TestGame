@@ -10,16 +10,14 @@ game_state::game_state(game_offscreen_buffer* Buffer)
 
 	this->GameMap = new game_map(40, 30);      // Create the game map.
 
-	Buffer->MapRegionInUse.x = Buffer->MapRegionTotal.x;
-	Buffer->MapRegionInUse.y = Buffer->MapRegionTotal.y;
 
-	// Scale the GameMap dimensions by the largest factor that will allow it to fit in MapRegionTotal.
-	float MaxWidthScalingFactor = Buffer->MapRegionTotal.Width / this->GameMap->Width;
-	float MaxHeightScalingFactor = Buffer->MapRegionTotal.Height / this->GameMap->Height;
+	// Scale the GameMap dimensions by the largest factor that will allow it to fit in ActionRegion.
+	float MaxWidthScalingFactor = this->WindowRegions.ActionRegion.Width / this->GameMap->Width;
+	float MaxHeightScalingFactor = this->WindowRegions.ActionRegion.Height / this->GameMap->Height;
 	float ScalingFactor = MIN(MaxWidthScalingFactor, MaxHeightScalingFactor);
-	Buffer->MapRegionInUse.Width = ScalingFactor * this->GameMap->Width;
-	Buffer->MapRegionInUse.Height = ScalingFactor * this->GameMap->Height;
 
+	this->WindowRegions.ActionRegionInUse = intrectangle(this->WindowRegions.ActionRegion.x, this->WindowRegions.ActionRegion.y,
+		ScalingFactor * this->GameMap->Width, ScalingFactor * this->GameMap->Height);
 }
 
 game_round_state::game_round_state(game_state* GameState)

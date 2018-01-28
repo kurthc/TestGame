@@ -46,8 +46,8 @@ public:
 	game_state* GameState;
 	int TotalWidth;
 	int TotalHeight;
-	intrectangle MapRegionTotal;		// The part of the game screen reserved for a game map.
-	intrectangle MapRegionInUse;		// The part of the game screen actually used by the game map.
+	//intrectangle MapRegionTotal;		// The part of the game screen reserved for a game map.
+	//intrectangle MapRegionInUse;		// The part of the game screen actually used by the game map.
 	int MapBorderThickness = 5;
 	int MapBorderColor = RGB(1, 0, 1);
 
@@ -90,11 +90,14 @@ public:
 class game_window_regions
 {
 public:
-	intrectangle ActionRegion { 200, 50, 1280-400, 720-100 };
-	intrectangle ActionRegionInUse { 0, 0, 0, 0 };
+	intrectangle ActionRegion { 200, 50, 1280-400, 720-100 };     // fixed as long as the window is not resizable.
+	//trectangle ActionRegion{ 200, 200, 200, 200 };  
+	intrectangle ActionRegionInUse { 0, 0, 0, 0 };                // Set in game_state constructor.
 	intrectangle ScoreRegion{ 50, 50, 100, 720 - 100 };
 
 	//game_window_regions();
+	game_window_regions() {};
+	//game_window_regions(int x, int y, int Width, int Height) ;
 };
 
 class game_state

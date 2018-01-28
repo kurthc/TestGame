@@ -48,6 +48,8 @@ struct intrectangle
 	int y;
 	int Width;
 	int Height;
+	intrectangle() {};
+	intrectangle(int x, int y, int Width, int Height) : x(x), y(y), Width(Width), Height(Height) {};
 };
 
 // TODO: Why are these int?
