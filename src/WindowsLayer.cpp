@@ -14,11 +14,9 @@ static win32_window_dimension Win32GetWindowDimension(HWND Window)
     return(Result);
 }
 
-static void
-Win32ResizeDIBSection(win32_offscreen_buffer *Buffer, int Width, int Height)
+// Initialize the screen back buffer.
+static void Win32ResizeDIBSection(win32_offscreen_buffer *Buffer, int Width, int Height)
 {
-	// Initialize the buffer.
-
 	// Free Buffer.Memory if it is not already empty.
     if(Buffer->Memory)
     {
@@ -30,13 +28,9 @@ Win32ResizeDIBSection(win32_offscreen_buffer *Buffer, int Width, int Height)
 
     int BytesPerPixel = 4;
 
-    // NOTE(casey): When the biHeight field is negative, this is the clue to
-    // Windows to treat this bitmap as top-down, not bottom-up, meaning that
-    // the first three bytes of the image are the color for the top left pixel
-    // in the bitmap, not the bottom left!
     Buffer->Info.bmiHeader.biSize = sizeof(Buffer->Info.bmiHeader);
     Buffer->Info.bmiHeader.biWidth = Buffer->Width;
-    Buffer->Info.bmiHeader.biHeight = -Buffer->Height;
+    Buffer->Info.bmiHeader.biHeight = -Buffer->Height;   // Negative means this bitmap is treated as top-down. The first bytes are for the top left pixel.
     Buffer->Info.bmiHeader.biPlanes = 1;
     Buffer->Info.bmiHeader.biBitCount = 32;
     Buffer->Info.bmiHeader.biCompression = BI_RGB;
@@ -47,18 +41,27 @@ Win32ResizeDIBSection(win32_offscreen_buffer *Buffer, int Width, int Height)
 
 static void Win32DisplayBufferInWindow(win32_offscreen_buffer *Buffer, HDC DeviceContext, int WindowWidth, int WindowHeight)
 {
-    // Note that WindowWidth and WindowHeight are leftover from when the window could stretch. Maybe we will re-enable this later.
+    // Note that WindowWidth and WindowHeight are leftover from when the window could stretch. We could probably remove them.
+
+	// Copy the Game Buffer into the Memory Device Context...
+	StretchDIBits(MemoryDeviceContext, 0, 0, Buffer->Width, Buffer->Height, 0, 0, Buffer->Width, Buffer->Height, Buffer->Memory, &Buffer->Info, DIB_RGB_COLORS, SRCCOPY);
+	
+	// ... and then onto the screen.
+	BitBlt(DeviceContext, 0, 0, Buffer->Width, Buffer->Height, MemoryDeviceContext, 0, 0, SRCCOPY);
 
 	//char *Something = "This is a test";
 	//RECT r = { 10, 10, 100, 100 };
 	//DrawText(DeviceContext, Something, -1, &r, DT_LEFT);
+	//Rectangle(MemoryDeviceContext, 10, 10, 100, 100);
 
+	// We used to use this, but I added the Memory DC so I could write text to the buffer image before blitting it to the screen.
+	/*
 	StretchDIBits(DeviceContext, 0, 0, Buffer->Width, Buffer->Height,
 			0, 0, Buffer->Width, Buffer->Height,
 			Buffer->Memory,
 			&Buffer->Info,
 			DIB_RGB_COLORS, SRCCOPY);
-
+	*/
 }
 
 static LRESULT CALLBACK Win32MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LPARAM LParam)
@@ -184,12 +187,24 @@ void Win32HandleMessages()
 	return;
 }
 
+// Attach a console window for debugging.
 static void Win32AddConsole()
 {
 	FILE *stream;
 	AllocConsole();
 	AttachConsole(GetCurrentProcessId());
 	freopen_s(&stream, "CON", "w", stdout);
+}
+
+// Create the Memory DC.
+bool Win32SetUpMemoryDeviceContext(HDC DeviceContext)
+{
+	bool Success;
+	MemoryDeviceContext = CreateCompatibleDC(DeviceContext);                             // Get a memory DC the same size/attributes as the Window one.
+	MemoryDeviceContextBitmap = CreateCompatibleBitmap(DeviceContext, GameWindowWidth, GameWindowHeight);  // The memory DC needs a bitmap to write to.
+	Success = SelectObject(MemoryDeviceContext, MemoryDeviceContextBitmap);                                      // Attach the bitmap to the memory DC.
+	if (!Success) std::cout << "Failure setting up Device Context\n";
+	return Success;
 }
 
 int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLine, int ShowCode)
@@ -223,8 +238,11 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
         if(Window)
         {
 			
-			// Since we specified CS_OWNDC, we can just get one device context and use it forever because we are not sharing it with anyone.
-            HDC DeviceContext = GetDC(Window);
+			// Get the device context for the window (for writing graphics to the window)
+			// and make a memory device context to pass through to it. 
+			HDC DeviceContext = GetDC(Window);
+			Win32SetUpMemoryDeviceContext(DeviceContext);
+
 
 			//game_offscreen_buffer GameBuffer(GlobalBackBuffer.Width, GlobalBackBuffer.Height);
 			game_offscreen_buffer* GameBuffer = new game_offscreen_buffer(GlobalBackBuffer.Width, GlobalBackBuffer.Height);

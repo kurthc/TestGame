@@ -134,8 +134,8 @@ void game_state::ProcessSnake(snake *Snake)
 			Snake->AddSegments(SEGMENTS_TO_ADD_ON_EAT_PELLET);
 			std::cout << "Ate a pellet!" << std::endl;
 			CurrentRound.Score += 1;
-			Snake->Speed += .15;
-			//Snake->Speed *= 1.1;
+			Snake->Speed += SNAKE_ADDITIVE_SPEED_INCREASE;
+			//Snake->Speed *= SNAKE_MULTIPLICATIVE_SPEED_INCREASE;;
 		}
 		else
 		{

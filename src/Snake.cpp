@@ -35,7 +35,7 @@ snake::snake(int Length, vec2 InitialPosition, vec2 InitialDirection)
 
 	this->AddSegments(Length - 1);
 
-	this->Speed = 1.5;
+	this->Speed = SNAKE_INITIAL_SPEED;
 	this->Timer = 0;
 }
 
