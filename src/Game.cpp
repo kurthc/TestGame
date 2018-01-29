@@ -185,15 +185,11 @@ void game_state::ProcessInput(keys_down *KeysDown)
 		}
 
 		// Don't allow the direction to change if you're pressing the same direction the snake is already going
-		// or in the opposite direction.
-		if (DirectionChanged && (abs(Snake.Direction * NewDirection) <= 0.0005f))
+		// or in the opposite direction (i.e. the dot product of the new direction and the head's direction should be zero).
+		if (DirectionChanged && (abs(Snake.Segments.front().Direction * NewDirection) <= 0.0005f))
 		{
-			// TODO: Bug: While going up, press right and the down quickly and you can do a 180.
-
 			this->CurrentRound.Snake->SetDirection(NewDirection);
 		}
-
-
 
 	}
 	else  // If in game over state

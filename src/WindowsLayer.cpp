@@ -1,18 +1,18 @@
 #include "Global.h"
 #include "WindowsLayer.h"
 
-
-static win32_window_dimension Win32GetWindowDimension(HWND Window)
-{
-    win32_window_dimension Result;
-    
-    RECT ClientRect;
-    GetClientRect(Window, &ClientRect);
-    Result.Width = ClientRect.right - ClientRect.left;
-    Result.Height = ClientRect.bottom - ClientRect.top;
-
-    return(Result);
-}
+//
+//static win32_window_dimension Win32GetWindowDimension(HWND Window)
+//{
+//    win32_window_dimension Result;
+//    
+//    RECT ClientRect;
+//    GetClientRect(Window, &ClientRect);
+//    Result.Width = ClientRect.right - ClientRect.left;
+//    Result.Height = ClientRect.bottom - ClientRect.top;
+//
+//    return(Result);
+//}
 
 // Initialize the screen back buffer.
 static void Win32ResizeDIBSection(win32_offscreen_buffer *Buffer, int Width, int Height)
@@ -39,15 +39,15 @@ static void Win32ResizeDIBSection(win32_offscreen_buffer *Buffer, int Width, int
     Buffer->Memory = VirtualAlloc(0, BitmapMemorySize, MEM_COMMIT, PAGE_READWRITE);
 }
 
-static void Win32DisplayBufferInWindow(win32_offscreen_buffer *Buffer, HDC DeviceContext, int WindowWidth, int WindowHeight)
+static void Win32DisplayBufferInWindow(win32_offscreen_buffer *Buffer, HDC DeviceContext)
 {
-    // Note that WindowWidth and WindowHeight are leftover from when the window could stretch. We could probably remove them.
-
 	// Copy the Game Buffer into the Memory Device Context...
 	StretchDIBits(MemoryDeviceContext, 0, 0, Buffer->Width, Buffer->Height, 0, 0, Buffer->Width, Buffer->Height, Buffer->Memory, &Buffer->Info, DIB_RGB_COLORS, SRCCOPY);
 	
 	// ... and then onto the screen.
 	BitBlt(DeviceContext, 0, 0, Buffer->Width, Buffer->Height, MemoryDeviceContext, 0, 0, SRCCOPY);
+
+	// And this is where we will print the score, and whatever.
 
 	//char *Something = "This is a test";
 	//RECT r = { 10, 10, 100, 100 };
@@ -148,9 +148,10 @@ static LRESULT CALLBACK Win32MainWindowCallback(HWND Window, UINT Message, WPARA
         {
             PAINTSTRUCT Paint;
             HDC DeviceContext = BeginPaint(Window, &Paint);
-            win32_window_dimension Dimension = Win32GetWindowDimension(Window);
-            Win32DisplayBufferInWindow(&GlobalBackBuffer, DeviceContext,
-                                       Dimension.Width, Dimension.Height);
+			Win32DisplayBufferInWindow(&GlobalBackBuffer, DeviceContext);
+            //win32_window_dimension Dimension = Win32GetWindowDimension(Window);
+            //Win32DisplayBufferInWindow(&GlobalBackBuffer, DeviceContext,
+            //                           Dimension.Width, Dimension.Height);
             EndPaint(Window, &Paint);
         } break;
 
@@ -243,14 +244,12 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 			HDC DeviceContext = GetDC(Window);
 			Win32SetUpMemoryDeviceContext(DeviceContext);
 
-
-			//game_offscreen_buffer GameBuffer(GlobalBackBuffer.Width, GlobalBackBuffer.Height);
 			game_offscreen_buffer* GameBuffer = new game_offscreen_buffer(GlobalBackBuffer.Width, GlobalBackBuffer.Height);
 			GameBuffer->Memory = GlobalBackBuffer.Memory;
 
 			game_state* GameState = new game_state(GameBuffer);
-			//GameState->Buffer = GameBuffer;
 			GameBuffer->GameState = GameState;
+			GlobalGameStatePointer = GameState;
 
 			GlobalRunning = true;
 			float LastFrameStart = GetSeconds();
@@ -269,6 +268,9 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 
 				// Do something with sleep here?
 				CurrentTime = GetSeconds();
+
+				//std::cout << "CurrentTime: " << 1000 * (CurrentTime - LastFrameStart) << "\n";
+
 				while (CurrentTime - LastFrameStart < (1 / TargetFPS))
 				{
 					CurrentTime = GetSeconds();
@@ -277,9 +279,10 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 				//
 				// Update the window.
 				//
-                win32_window_dimension Dimension = Win32GetWindowDimension(Window);     // Calls GetClientRect() to get the client area.
-                Win32DisplayBufferInWindow(&GlobalBackBuffer, DeviceContext,            // Calls StretchDIBits()
-                                           Dimension.Width, Dimension.Height);
+				Win32DisplayBufferInWindow(&GlobalBackBuffer, DeviceContext);            // Calls StretchDIBits()
+                //win32_window_dimension Dimension = Win32GetWindowDimension(Window);     // Calls GetClientRect() to get the client area.
+                //Win32DisplayBufferInWindow(&GlobalBackBuffer, DeviceContext,            // Calls StretchDIBits()
+                //                           Dimension.Width, Dimension.Height);
 
 				LastFrameStart = GetSeconds();
 				
@@ -291,12 +294,12 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
         }
         else
         {
-            // TODO(casey): Logging
+			std::cout << "CreateWindowExA() failed.\n";
         }
     }
     else
     {
-        // TODO(casey): Logging
+		std::cout << "RegisterClassA() failed.\n";
     }
     
     return(0);

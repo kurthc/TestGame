@@ -25,6 +25,7 @@ static win32_offscreen_buffer GlobalBackBuffer;
 static keys_down KeysDown;
 static HDC MemoryDeviceContext;
 static HBITMAP MemoryDeviceContextBitmap;
+static game_state* GlobalGameStatePointer;
 
 
 bool Win32SetUpMemoryDeviceContext(HDC DeviceContext);
