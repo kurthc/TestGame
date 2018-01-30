@@ -1,6 +1,5 @@
 #include "Global.h"
 #include "WindowsLayer.h"
-#include <stdio.h>
 
 //
 //static win32_window_dimension Win32GetWindowDimension(HWND Window)
@@ -44,16 +43,17 @@ static void Win32DisplayBufferInWindow(win32_offscreen_buffer *Buffer, HDC Devic
 {
 	// Copy the Game Buffer into the Memory Device Context...
 	StretchDIBits(MemoryDeviceContext, 0, 0, Buffer->Width, Buffer->Height, 0, 0, Buffer->Width, Buffer->Height, Buffer->Memory, &Buffer->Info, DIB_RGB_COLORS, SRCCOPY);
+
+	// wsprintf doesn't support floating point (?!)
+	char MsgBuffer[256];
+	wsprintf(MsgBuffer, "FPS: %i\n", (int)ObservedFPS);
 	
+	
+	RECT r = {10, 10, 100, 100};
+	DrawText(MemoryDeviceContext, MsgBuffer, -1, &r, DT_LEFT);
+
 	// ... and then onto the screen.
 	BitBlt(DeviceContext, 0, 0, Buffer->Width, Buffer->Height, MemoryDeviceContext, 0, 0, SRCCOPY);
-
-	// And this is where we will print the score, and whatever.
-
-	//char *Something = "This is a test";
-	//RECT r = { 10, 10, 100, 100 };
-	//DrawText(DeviceContext, Something, -1, &r, DT_LEFT);
-	//Rectangle(MemoryDeviceContext, 10, 10, 100, 100);
 
 	// We used to use this, but I added the Memory DC so I could write text to the buffer image before blitting it to the screen.
 	/*
@@ -266,7 +266,6 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 			// ********* The Main game loop starts here *************
 			//
 
-			static int t = 0;
 			while(GlobalRunning)
             {
 				// Handle Windows messages, process the game, and render the buffer.
@@ -274,22 +273,19 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 				GameState->GameStateProcess(&KeysDown, GameBuffer);
 				GameBuffer->RenderBuffer();
 
-				timing_information EndProcessingTime = GetSeconds();
+				timing_information EndProcessingTime = GetSeconds();       // Time game processing ends for a frame
 
-				// Do something with sleep here?
 				TimingMessage.str("");
 				//TimingMessage << "Processing counts elapsed: " << EndProcessingTime.Counts - FrameStart.Counts;
 				//TimingMessage << "Processing seconds elapsed: " << EndProcessingTime.Seconds - FrameStart.Seconds;
-				++t;
-				if (t % 30 == 0)
-					TimingMessage << t/30;
 
 				timing_information CurrentTime = GetSeconds();     //TODO: You don't need this variable. Factor it out.
+	
+				// Do something with sleep here?
 				while (CurrentTime.Seconds - FrameStart.Seconds < (1.0f / TargetFPS))
 				{
 					CurrentTime = GetSeconds();
 				}
-
                
 				//
 				// Update the window.
@@ -305,10 +301,7 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 				//TimingMessage << "Total frame elapsed: " << FrameStart.Counts - PreviousFrameStart.Counts;
 				TimingMessage << "FPS: " << ObservedFPS << "  ";
 				TimingMessage << "Total frame sec elapsed: " << FrameStart.Seconds - PreviousFrameStart.Seconds;
-				//if (t%30 == 0) std::cout << TimingMessage.str() << "\n";
-				//std::cout << FrameStart.Seconds << "\n"; 
 				std::cout << TimingMessage.str() << "\n";
-
 
 			}  // ****************End of Game Loop
 			
