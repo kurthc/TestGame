@@ -1,5 +1,6 @@
 #include "Global.h"
 #include "WindowsLayer.h"
+#include <stdio.h>
 
 //
 //static win32_window_dimension Win32GetWindowDimension(HWND Window)
@@ -164,11 +165,15 @@ static LRESULT CALLBACK Win32MainWindowCallback(HWND Window, UINT Message, WPARA
     return(Result);
 }
 
-float GetSeconds()
+timing_information GetSeconds()
 {
-	LARGE_INTEGER Counts;
-	QueryPerformanceCounter(&Counts);
-	return ((float)Counts.QuadPart) / CountsPerSecond;
+	LARGE_INTEGER LICounts;
+	int Counts;
+	float Seconds;
+	QueryPerformanceCounter(&LICounts);
+	Counts = LICounts.QuadPart;
+	Seconds = (float)Counts / CountsPerSecond;
+	return {Seconds, Counts, LICounts};
 }
 
 void Win32HandleMessages()
@@ -252,43 +257,59 @@ int CALLBACK WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CommandLi
 			GlobalGameStatePointer = GameState;
 
 			GlobalRunning = true;
-			float LastFrameStart = GetSeconds();
-			float CurrentTime = 0;
-			int FrameCount = 0;
+			timing_information FrameStart = GetSeconds();
+			timing_information PreviousFrameStart {};
+
+			std::stringstream TimingMessage;
 
 			//
 			// ********* The Main game loop starts here *************
 			//
-            while(GlobalRunning)
+
+			static int t = 0;
+			while(GlobalRunning)
             {
 				// Handle Windows messages, process the game, and render the buffer.
 				Win32HandleMessages();
 				GameState->GameStateProcess(&KeysDown, GameBuffer);
 				GameBuffer->RenderBuffer();
 
+				timing_information EndProcessingTime = GetSeconds();
+
 				// Do something with sleep here?
-				CurrentTime = GetSeconds();
+				TimingMessage.str("");
+				//TimingMessage << "Processing counts elapsed: " << EndProcessingTime.Counts - FrameStart.Counts;
+				//TimingMessage << "Processing seconds elapsed: " << EndProcessingTime.Seconds - FrameStart.Seconds;
+				++t;
+				if (t % 30 == 0)
+					TimingMessage << t/30;
 
-				//std::cout << "CurrentTime: " << 1000 * (CurrentTime - LastFrameStart) << "\n";
-
-				while (CurrentTime - LastFrameStart < (1 / TargetFPS))
+				timing_information CurrentTime = GetSeconds();     //TODO: You don't need this variable. Factor it out.
+				while (CurrentTime.Seconds - FrameStart.Seconds < (1.0f / TargetFPS))
 				{
 					CurrentTime = GetSeconds();
 				}
-                
+
+               
 				//
 				// Update the window.
 				//
 				Win32DisplayBufferInWindow(&GlobalBackBuffer, DeviceContext);            // Calls StretchDIBits()
-                //win32_window_dimension Dimension = Win32GetWindowDimension(Window);     // Calls GetClientRect() to get the client area.
-                //Win32DisplayBufferInWindow(&GlobalBackBuffer, DeviceContext,            // Calls StretchDIBits()
-                //                           Dimension.Width, Dimension.Height);
 
-				LastFrameStart = GetSeconds();
-				
-				// Output the number of frames if desired.
-				//std::cout << "Frame Count: " << FrameCount++ << std::endl;
-				
+				// Update the timing information.
+				PreviousFrameStart = FrameStart;
+				FrameStart = GetSeconds();
+
+				ObservedFPS = 1.0f / (FrameStart.Seconds - PreviousFrameStart.Seconds);
+
+				//TimingMessage << "Total frame elapsed: " << FrameStart.Counts - PreviousFrameStart.Counts;
+				TimingMessage << "FPS: " << ObservedFPS << "  ";
+				TimingMessage << "Total frame sec elapsed: " << FrameStart.Seconds - PreviousFrameStart.Seconds;
+				//if (t%30 == 0) std::cout << TimingMessage.str() << "\n";
+				//std::cout << FrameStart.Seconds << "\n"; 
+				std::cout << TimingMessage.str() << "\n";
+
+
 			}  // ****************End of Game Loop
 			
         }

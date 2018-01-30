@@ -15,14 +15,14 @@ Fix DoRectanglesInterect()
 */
 
 // Gameplay constants.
-constexpr float SNAKE_INITIAL_SPEED = 1.5f;
-constexpr float SNAKE_ADDITIVE_SPEED_INCREASE = 0.1f;
+constexpr float SNAKE_INITIAL_SPEED = 5.0f;        //TODO: This speed should be independemnt of TargetFPS.
+constexpr float SNAKE_ADDITIVE_SPEED_INCREASE = 0.5f;
 constexpr float SNAKE_MULTIPLICATIVE_SPEED_INCREASE = 1.05f;
 constexpr int SEGMENTS_TO_ADD_ON_EAT_PELLET = 3;
 
 static int GameWindowWidth = 1280;
 static int GameWindowHeight = 720;
-static int TargetFPS = 30;
+static int TargetFPS = 60.0f;
 static int CountsPerSecond;
 
 
