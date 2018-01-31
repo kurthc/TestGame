@@ -22,8 +22,6 @@ void game_offscreen_buffer::ClearBuffer()
 	}
 }
 
-
-
 void game_offscreen_buffer::DrawRectangle(int Left, int Top, int Width, int Height, int32_t Color)
 {
 	int32_t* Pixel = (int32_t*)this->Memory;
@@ -175,4 +173,6 @@ void game_offscreen_buffer::DrawDebugOverLay()
 	this->DrawRectangle(this->GameState->WindowRegions.ActionRegion, MyRGB(.7, 0, 0));
 	this->DrawRectangle(this->GameState->WindowRegions.ActionRegionInUse, MyRGB(.9, 0, 0));
 	this->DrawRectangle(this->GameState->WindowRegions.ScoreRegion, MyRGB(0, 0, 1));
+	this->DrawRectangle(this->GameState->WindowRegions.StatsRegion, MyRGB(0, .2, .8));
+	
 }

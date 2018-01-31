@@ -49,8 +49,9 @@ public:
 	rectangle(float, float, float, float);
 };
 
-struct intrectangle
+class intrectangle
 {
+public:
 	int x;
 	int y;
 	int Width;

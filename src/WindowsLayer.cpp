@@ -45,13 +45,21 @@ static void Win32DisplayBufferInWindow(win32_offscreen_buffer *Buffer, HDC Devic
 	StretchDIBits(MemoryDeviceContext, 0, 0, Buffer->Width, Buffer->Height, 0, 0, Buffer->Width, Buffer->Height, Buffer->Memory, &Buffer->Info, DIB_RGB_COLORS, SRCCOPY);
 
 	// Add an FPS indicator to the screen.
-	std::stringstream FPS;
+	std::ostringstream FPS;
 	FPS << "FPS: " << std::setprecision(3) << ObservedFPS;
 	
-	RECT r = {10, 10, 100, 100};
+	intrectangle r = GlobalGameStatePointer->WindowRegions.StatsRegion;
+	RECT r2;
+	r2.left = r.x;
+	r2.top = r.y;
+	r2.right = r.x + r.Width;
+	r2.bottom = r.y + r.Height;;
+
+	//RECT r2{10, 10, 100, 100};
+
 	SetTextColor(MemoryDeviceContext, RGB(255, 255, 255));
 	SetBkColor(MemoryDeviceContext, RGB(0, 0, 0));
-	DrawText(MemoryDeviceContext, FPS.str().c_str(), -1, &r, DT_LEFT);
+	DrawText(MemoryDeviceContext, FPS.str().c_str(), -1, &r2, DT_LEFT);
 
 	// ... and then onto the screen.
 	BitBlt(DeviceContext, 0, 0, Buffer->Width, Buffer->Height, MemoryDeviceContext, 0, 0, SRCCOPY);

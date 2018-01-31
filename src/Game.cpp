@@ -75,6 +75,7 @@ void game_state::ProcessSnake(snake *Snake)
 
 	// The timer counts up to 1. When it gets there, move the snake.
 	Snake->Timer += Snake->Speed / 30.0f;   // FPS?
+	//Snake->Timer += Snake->Speed / TargetFPS;   // FPS?
 	if (Snake->Timer >= 1)
 	{
 		vec2 LastLocation = {0, 0};

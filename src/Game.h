@@ -91,9 +91,10 @@ class game_window_regions
 {
 public:
 	intrectangle ActionRegion { 200, 50, 1280-400, 720-100 };     // fixed as long as the window is not resizable.
-	//trectangle ActionRegion{ 200, 200, 200, 200 };  
 	intrectangle ActionRegionInUse { 0, 0, 0, 0 };                // Set in game_state constructor.
-	intrectangle ScoreRegion{ 50, 50, 100, 720 - 100 };
+	//intrectangle ScoreRegion{ 50, 50, 100, 100 };
+	intrectangle ScoreRegion{50, 50, 100, 100};
+	intrectangle StatsRegion{ 50, 500, 100, 100};
 
 	//game_window_regions();
 	game_window_regions() {};
