@@ -5,7 +5,7 @@ game_offscreen_buffer::game_offscreen_buffer(int TotalWidth, int TotalHeight)
 	this->TotalWidth = TotalWidth;
 	this->TotalHeight = TotalHeight;
 	this->MapBorderThickness = 5;
-	this->MapBorderColor = RGB(1.0, 0.0, 1.0);
+	this->MapBorderColor = MyRGB(1.0, 0.0, 1.0);
 	//this->MapRegionTotal.x = 200;
 	//this->MapRegionTotal.y = 50;
 	//this->MapRegionTotal.Width = TotalWidth - 100;
@@ -102,7 +102,7 @@ void game_offscreen_buffer::DrawBorder()
 	Outer.Height = Inner.Height + 2 * BorderWidth;
 
 	this->DrawRectangle(Outer, Color);
-	this->DrawRectangle(Inner, RGB(0.0, 0.0, 0.0));
+	this->DrawRectangle(Inner, MyRGB(0.0, 0.0, 0.0));
 }
 
 
@@ -119,7 +119,7 @@ void game_offscreen_buffer::DrawSnake()
 
 		// For debugging the Intangibility timer.
 		int Color = it->Color;
-		if (it->IntangibleTimer > 0) Color = RGB(1, 1, 0);
+		if (it->IntangibleTimer > 0) Color = MyRGB(1, 1, 0);
 		
 		rectangle Rec = this->MapToDisplayRectangle(DrawLocation.X, DrawLocation.Y, 1, 1);
 		this->DrawRectangle(Rec.x, Rec.y, Rec.Width, Rec.Height, Color);
@@ -135,7 +135,7 @@ void game_offscreen_buffer::DrawMap()
 		for (int x = 0; x < GameMap->Width; x++)
 		{
 			vec2 UpperLeftCorner = this->MapToDisplayCoordinates((float)x, (float)y);
-			this->DrawRectangle(UpperLeftCorner.X, UpperLeftCorner.Y, 2.0, 2.0, RGB(.5, .5, .5));
+			this->DrawRectangle(UpperLeftCorner.X, UpperLeftCorner.Y, 2.0, 2.0, MyRGB(.5, .5, .5));
 		}
 	}
 }
@@ -144,7 +144,7 @@ void game_offscreen_buffer::DrawScore()
 {
 	for (int i = 0; i < GameState->CurrentRound.Score; ++i)
 	{
-		this->DrawRectangle(10 + 20*i, 10, 10, 10, RGB(1, 1, 1));
+		this->DrawRectangle(10 + 20*i, 10, 10, 10, MyRGB(1, 1, 1));
 	}
 }
 
@@ -172,7 +172,7 @@ void game_offscreen_buffer::RenderBuffer()
 
 void game_offscreen_buffer::DrawDebugOverLay()
 {
-	this->DrawRectangle(this->GameState->WindowRegions.ActionRegion, RGB(.7, 0, 0));
-	this->DrawRectangle(this->GameState->WindowRegions.ActionRegionInUse, RGB(.9, 0, 0));
-	this->DrawRectangle(this->GameState->WindowRegions.ScoreRegion, RGB(0, 0, 1));
+	this->DrawRectangle(this->GameState->WindowRegions.ActionRegion, MyRGB(.7, 0, 0));
+	this->DrawRectangle(this->GameState->WindowRegions.ActionRegionInUse, MyRGB(.9, 0, 0));
+	this->DrawRectangle(this->GameState->WindowRegions.ScoreRegion, MyRGB(0, 0, 1));
 }

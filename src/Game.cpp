@@ -238,7 +238,7 @@ void game_round_state::AddPellet()
 	int y = (rand() % this->GameState->GameMap->Height);
 	pellet *Pellet = new pellet();		//TODO: Destroy these when done.
 	Pellet->Location.SetXY((float)x, (float)y);
-	Pellet->Color = RGB(1.0, 1.0, 1.0);
+	Pellet->Color = MyRGB(1.0, 1.0, 1.0);
 	this->Pellets.push_back(*Pellet);
 }
 

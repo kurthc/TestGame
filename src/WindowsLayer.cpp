@@ -44,25 +44,17 @@ static void Win32DisplayBufferInWindow(win32_offscreen_buffer *Buffer, HDC Devic
 	// Copy the Game Buffer into the Memory Device Context...
 	StretchDIBits(MemoryDeviceContext, 0, 0, Buffer->Width, Buffer->Height, 0, 0, Buffer->Width, Buffer->Height, Buffer->Memory, &Buffer->Info, DIB_RGB_COLORS, SRCCOPY);
 
-	// wsprintf doesn't support floating point (?!)
-	char MsgBuffer[256];
-	wsprintf(MsgBuffer, "FPS: %i\n", (int)ObservedFPS);
-	
+	// Add an FPS indicator to the screen.
+	std::stringstream FPS;
+	FPS << "FPS: " << std::setprecision(3) << ObservedFPS;
 	
 	RECT r = {10, 10, 100, 100};
-	DrawText(MemoryDeviceContext, MsgBuffer, -1, &r, DT_LEFT);
+	SetTextColor(MemoryDeviceContext, RGB(255, 255, 255));
+	SetBkColor(MemoryDeviceContext, RGB(0, 0, 0));
+	DrawText(MemoryDeviceContext, FPS.str().c_str(), -1, &r, DT_LEFT);
 
 	// ... and then onto the screen.
 	BitBlt(DeviceContext, 0, 0, Buffer->Width, Buffer->Height, MemoryDeviceContext, 0, 0, SRCCOPY);
-
-	// We used to use this, but I added the Memory DC so I could write text to the buffer image before blitting it to the screen.
-	/*
-	StretchDIBits(DeviceContext, 0, 0, Buffer->Width, Buffer->Height,
-			0, 0, Buffer->Width, Buffer->Height,
-			Buffer->Memory,
-			&Buffer->Info,
-			DIB_RGB_COLORS, SRCCOPY);
-	*/
 }
 
 static LRESULT CALLBACK Win32MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LPARAM LParam)

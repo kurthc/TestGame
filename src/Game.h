@@ -49,7 +49,7 @@ public:
 	//intrectangle MapRegionTotal;		// The part of the game screen reserved for a game map.
 	//intrectangle MapRegionInUse;		// The part of the game screen actually used by the game map.
 	int MapBorderThickness = 5;
-	int MapBorderColor = RGB(1, 0, 1);
+	int MapBorderColor = MyRGB(1, 0, 1);
 
 	game_offscreen_buffer(int TotalWidth, int TotalHeight);
 	void ClearBuffer();

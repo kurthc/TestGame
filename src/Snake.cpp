@@ -71,6 +71,6 @@ int snake::GetColor(int SegmentNumber)
 	constexpr float MinColor = 0.4f;
 
 	float GreenComponent = (MaxColor + MinColor) / 2.0f + (MaxColor - MinColor) / 2.0f * (float)sin(SegmentNumber * 2.0 * 3.14159265358979 / 12.0f);
-	int SegmentColor = RGB(0, GreenComponent, 0);
+	int SegmentColor = MyRGB(0, GreenComponent, 0);
 	return SegmentColor;
 }
